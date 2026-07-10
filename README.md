@@ -1,43 +1,43 @@
-# Nombre del proyecto
+# Project name
 
-## Descripción
+## Description
 
-¿Qué hace este aplicativo?
+What does this application do?
 
 ## Stack
 
 - Frontend:
 - Backend:
-- Base de datos:
-- Autenticación:
+- Database:
+- Authentication:
 - Hosting:
 
-## Requisitos previos
+## Prerequisites
 
-- Node.js versión X
-- Base de datos X
-- Variables de entorno necesarias
+- Node.js version X
+- Database X
+- Required environment variables
 
-## Instalación
+## Installation
 
 ```bash
 npm install
 ```
 
-## Ejecución local
+## Local run
 
 ```bash
 npm run dev
 ```
 
-## Variables de entorno
+## Environment variables
 
 ```txt
 DATABASE_URL=
 AUTH_SECRET=
 ```
 
-## Estructura del proyecto
+## Project structure
 
 ```txt
 /src
@@ -49,20 +49,20 @@ AUTH_SECRET=
 /docs
 ```
 
-## Scripts principales
+## Main scripts
 
-| Comando | Descripción |
+| Command | Description |
 |---|---|
-| npm run dev | Ejecuta ambiente local |
-| npm run build | Compila el proyecto |
-| npm run test | Ejecuta pruebas |
-| npm run lint | Revisa formato y errores |
+| npm run dev | Runs the local environment |
+| npm run build | Builds the project |
+| npm run test | Runs tests |
+| npm run lint | Checks formatting and errors |
 
-## Documentación
+## Documentation
 
-- Visión del producto: `/docs/01_vision_producto.md`
-- Arquitectura: `/docs/02_arquitectura.md`
-- Requisitos: `/docs/03_requisitos.md`
-- Backlog: `/docs/05_backlog.md`
-- API: `/docs/06_api.md`
-- Pruebas: `/docs/08_pruebas.md`
+- Product vision: `/docs_en/01_product_vision.md`
+- Architecture: `/docs_en/02_architecture.md`
+- Requirements: `/docs_en/03_requirements.md`
+- Backlog: `/docs_en/05_backlog.md`
+- API: `/docs_en/06_api.md`
+- Tests: `/docs_en/08_test_plan.md`

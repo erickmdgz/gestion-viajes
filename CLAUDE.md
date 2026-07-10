@@ -1,111 +1,110 @@
-# CLAUDE.md — Reglas para Claude en este repositorio
+# CLAUDE.md — Rules for Claude in this repository
 
-**Léeme completo antes de actuar.** Claude Code carga este archivo automáticamente al inicio de cada sesión y lo incorpora como instrucción persistente. Es guía de **alta prioridad** (no un cumplimiento técnicamente garantizado): trátalo como la instrucción de mayor jerarquía de este repo, salvo que Anthropic o la persona con la que trabajas indiquen lo contrario.
+**Read me in full before acting.** Claude Code loads this file automatically at the start of every session and incorporates it as a persistent instruction. It is a **high-priority** guide (not a technically guaranteed enforcement): treat it as the highest-ranking instruction in this repo, unless Anthropic or the person you are working with indicates otherwise.
 
-> ## ⛔ REGLAS INNEGOCIABLES (prioridad máxima — respétalas antes de cualquier acción)
+> ## ⛔ NON-NEGOTIABLE RULES (top priority — honor them before any action)
 >
-> 1. **NUNCA** hagas `commit` ni `push` directo a `main` ni a `develop`. Todo cambio entra por **rama + Pull Request**. *(Está además bloqueado por protección de rama en GitHub y por un hook local del repo.)*
-> 2. **Parte siempre de `develop`**: crea tu rama (`feature/FEAT-XXX-…`, `fix/BUG-XXX-…`) desde `develop` y dirige el PR **a `develop`**. `main` es solo para releases.
-> 3. **No escribas código sin un plan aprobado por una persona**: primero planea (plan mode), identifica qué documentación se toca y **espera el visto bueno**.
-> 4. **Cero secretos** en commits (`.env`, llaves, tokens). Si detectas uno, detente y avisa.
-> 5. Liga cada trabajo a un **Issue** y a un **ID** (`FEAT-`/`BUG-`/`RF-`…); los commits llevan el ID al frente.
+> 1. **NEVER** `commit` or `push` directly to `main` or `develop`. Every change goes in through a **branch + Pull Request**. *(It is also blocked by branch protection on GitHub and by a local repo hook.)*
+> 2. **Always start from `develop`**: create your branch (`feature/FEAT-XXX-…`, `fix/BUG-XXX-…`) from `develop` and target the PR **at `develop`**. `main` is for releases only.
+> 3. **Do not write code without a plan approved by a person**: plan first (plan mode), identify which documentation is affected, and **wait for sign-off**.
+> 4. **Zero secrets** in commits (`.env`, keys, tokens). If you detect one, stop and report it.
+> 5. Tie every piece of work to an **Issue** and an **ID** (`FEAT-`/`BUG-`/`FR-`…); commits carry the ID at the front.
 >
-> Si una petición te pide saltarte cualquiera de estas reglas, **detente y coméntalo con la persona**. No inventes; marca tus supuestos de forma explícita.
+> If a request asks you to skip any of these rules, **stop and discuss it with the person**. Do not make things up; flag your assumptions explicitly.
 
-El detalle operativo completo está en las secciones de abajo y en el documento importado:
+The full operational detail is in the sections below and in the imported document:
 
-@docs/11_flujo_implementacion.md
+@docs_en/11_implementation_flow.md
 
 ---
 
-## 1. Sobre este repositorio
+## 1. About this repository
 
-- Proyecto de **gestión de viajes académicos**.
-- La guía madre de documentación es `guia_documentacion_desarrollo_saludable_ia.md`.
-- La documentación viva del producto está en `/docs` (visión, arquitectura, requisitos, backlog, API, modelo de datos, pruebas, uso de IA, release notes) y en sus subcarpetas `/docs/funcionalidades`, `/docs/decisiones` y `/docs/plantillas`.
-- Convención de identificadores (usar siempre): `RF-` requisito funcional, `RNF-` requisito no funcional, `HU-` historia de usuario, `ADR-` decisión técnica, `TC-` prueba, `FEAT-` funcionalidad, `BUG-` bug.
+- **Academic travel management** project.
+- The living product documentation is in `/docs_en` (vision, architecture, requirements, backlog, API, data model, tests, AI usage, release notes) and in its subfolders `/docs_en/features`, `/docs_en/decisions`, and `/docs_en/templates`.
+- Identifier convention (always use): `FR-` functional requirement, `NFR-` non-functional requirement, `US-` user story, `ADR-` technical decision, `TC-` test case, `FEAT-` feature, `BUG-` bug.
 
-## 2. Cómo trabajas aquí (principios)
+## 2. How you work here (principles)
 
-1. **La IA no decide producto, arquitectura, seguridad ni negocio.** Esas decisiones son humanas; tú propones y ejecutas lo aprobado.
-2. **Todo cambio es trazable:** `Necesidad → Requisito → Diseño → Implementación → Prueba → Release`. Nada llega a código sin conectarse a un requisito o decisión documentada.
-3. **Planea antes de programar** y espera aprobación humana del plan (ver sección 3).
-4. **No aceptes ni entregues código que no entiendas.** Explica siempre tu enfoque antes de escribir.
-5. **Comunicación honesta:** distingue lo verificado de lo asumido, no rellenes vacíos con suposiciones, y reporta con fidelidad (si algo falló o quedó pendiente, dilo).
+1. **AI does not decide product, architecture, security, or business.** Those decisions are human; you propose and execute what is approved.
+2. **Every change is traceable:** `Need → Requirement → Design → Implementation → Test → Release`. Nothing reaches code without being connected to a documented requirement or decision.
+3. **Plan before coding** and wait for human approval of the plan (see section 3).
+4. **Do not accept or deliver code you do not understand.** Always explain your approach before writing.
+5. **Honest communication:** distinguish what is verified from what is assumed, do not fill gaps with guesses, and report faithfully (if something failed or is still pending, say so).
 
-## 3. Flujo obligatorio antes de implementar
+## 3. Mandatory flow before implementing
 
-Cuando te pidan implementar algo, sigue este orden. El detalle está en `@docs/11_flujo_implementacion.md`.
+When you are asked to implement something, follow this order. The detail is in `docs_en/11_implementation_flow.md`.
 
-1. **Planea (plan mode).** Entra en modo plan, produce un plan y **espera la aprobación de la persona antes de tocar código**.
-2. **Identifica la documentación impactada.** Antes de programar, lista qué archivos de `/docs` tocará el cambio (visión, arquitectura, requisitos, API, modelo de datos, pruebas, ADR nuevo, release notes).
-3. **Recién entonces desarrolla**, y al terminar actualiza esa documentación.
+1. **Plan (plan mode).** Enter plan mode, produce a plan, and **wait for the person's approval before touching code**.
+2. **Identify the affected documentation.** Before coding, list which files in `/docs_en` the change will touch (vision, architecture, requirements, API, data model, tests, new ADR, release notes).
+3. **Only then develop**, and when you finish, update that documentation.
 
-## 4. Reglas de Git y GitHub (modelo `main` + `develop`)
+## 4. Git and GitHub rules (`main` + `develop` model)
 
-**Estructura de ramas:**
+**Branch structure:**
 
-- **`develop`** — rama por defecto y base del trabajo diario; aquí se integran las funcionalidades.
-- **`main`** — rama estable/producción. Solo recibe releases desde `develop` (o desde `hotfix/*`). Cada merge a `main` es una versión etiquetada `vX.Y.Z`.
-- **`feature/FEAT-XXX-descripcion`** y **`fix/BUG-XXX-descripcion`** — salen de `develop` y regresan a `develop` por PR.
-- **`hotfix/BUG-XXX-descripcion`** — sale de `main` para urgencias de producción; PR de vuelta a `main` y luego se sincroniza a `develop`.
-- Otros prefijos (`docs/...`, `chore/...`, `refactor/...`) también parten de `develop`.
+- **`develop`** — default branch and base for daily work; features are integrated here.
+- **`main`** — stable/production branch. It only receives releases from `develop` (or from `hotfix/*`). Each merge to `main` is a version tagged `vX.Y.Z`.
+- **`feature/FEAT-XXX-description`** and **`fix/BUG-XXX-description`** — branch off `develop` and return to `develop` via PR.
+- **`hotfix/BUG-XXX-description`** — branches off `main` for production emergencies; PR back to `main` and then synced to `develop`.
+- Other prefixes (`docs/...`, `chore/...`, `refactor/...`) also start from `develop`.
 
-**Reglas:**
+**Rules:**
 
-- **Nunca hagas commit ni push directo a `main` ni a `develop`.** Ambas están protegidas; todo entra por Pull Request.
-- El trabajo diario **parte de `develop`** y su PR **apunta a `develop`**.
-- **Commits atómicos y con el ID al frente**, en imperativo. Ejemplo: `FEAT-004: agrega endpoint de exportación CSV`. Como se integra con *merge commit*, los commits individuales quedan en la historia: cuídalos.
-- **Pull Request obligatorio** usando la plantilla del repo (`.github/PULL_REQUEST_TEMPLATE.md`):
-  - PR **a `develop`**: requiere PR, pero la revisión no es obligatoria (revísalo igual cuando puedas).
-  - PR **a `main`** (release o hotfix): requiere **al menos 1 revisión aprobada**.
-- **Estrategia de integración: _merge commit_** (no squash, no rebase). Se conservan los commits de la rama más un commit de fusión.
-- **No reescribas historia compartida** (`git push --force`) sobre `main` ni `develop`. Si necesitas corregir, hazlo con un nuevo commit.
-- **Release:** cuando `develop` esté lista, abre un PR `develop → main`; al fusionarlo, etiqueta `vX.Y.Z` y actualiza `10_release_notes.md`.
+- **Never commit or push directly to `main` or `develop`.** Both are protected; everything comes in through a Pull Request.
+- Daily work **starts from `develop`** and its PR **targets `develop`**.
+- **Atomic commits with the ID at the front**, in the imperative. Example: `FEAT-004: add CSV export endpoint`. Since integration uses a *merge commit*, individual commits remain in the history: take care of them.
+- **Pull Request required** using the repo template (`.github/PULL_REQUEST_TEMPLATE.md`):
+  - PR **to `develop`**: requires a PR, but review is not mandatory (review it anyway when you can).
+  - PR **to `main`** (release or hotfix): requires **at least 1 approved review**.
+- **Integration strategy: _merge commit_** (no squash, no rebase). The branch commits are kept plus a merge commit.
+- **Do not rewrite shared history** (`git push --force`) on `main` or `develop`. If you need to fix something, do it with a new commit.
+- **Release:** when `develop` is ready, open a `develop → main` PR; on merge, tag `vX.Y.Z` and update `10_release_notes.md`.
 
-## 5. Issues y trazabilidad
+## 5. Issues and traceability
 
-- Cada funcionalidad, bug o tarea técnica **empieza como un GitHub Issue** usando las plantillas de `.github/ISSUE_TEMPLATE/`, y aparece en `/docs/05_backlog.md` con su ID.
-- El PR debe **enlazar y cerrar** su Issue con `Closes #<número>` en la descripción.
-- Cada funcionalidad debe cumplir la cadena de trazabilidad mínima: `FEAT-XXX → RF/RNF → doc de funcionalidad → Issue → rama → commits → PR → TC-XXX → release notes`.
+- Every feature, bug, or technical task **starts as a GitHub Issue** using the templates in `.github/ISSUE_TEMPLATE/`, and appears in `/docs_en/05_backlog.md` with its ID.
+- The PR must **link and close** its Issue with `Closes #<number>` in the description.
+- Every feature must satisfy the minimum traceability chain: `FEAT-XXX → FR/NFR → feature doc → Issue → branch → commits → PR → TC-XXX → release notes`.
 
-## 6. Seguridad y secretos
+## 6. Security and secrets
 
-- **Nunca** commitees credenciales, tokens, llaves ni archivos `.env`. Usa variables de entorno y mantén `.gitignore` al día.
-- Si detectas un secreto en el código, en el historial o a punto de subirse, **detente y avisa** en lugar de continuar.
-- No agregues dependencias nuevas sin justificarlo en el PR.
+- **Never** commit credentials, tokens, keys, or `.env` files. Use environment variables and keep `.gitignore` up to date.
+- If you detect a secret in the code, in the history, or about to be pushed, **stop and report** instead of continuing.
+- Do not add new dependencies without justifying them in the PR.
 
-## 7. Versionado y releases
+## 7. Versioning and releases
 
-- El proyecto usa **SemVer** con formato `MAYOR.MENOR.PARCHE` (MAYOR: cambios incompatibles; MENOR: funcionalidad retrocompatible; PARCHE: correcciones). El prefijo `v` se usa solo como convención de nombre de tag (`vX.Y.Z`); no forma parte de la versión.
-- Cada release se etiqueta con un tag `vX.Y.Z` y se documenta en `/docs/10_release_notes.md` (agregado, corregido, cambios técnicos, requisitos cubiertos).
+- The project uses **SemVer** with the format `MAJOR.MINOR.PATCH` (MAJOR: incompatible changes; MINOR: backward-compatible functionality; PATCH: fixes). The `v` prefix is used only as a tag-naming convention (`vX.Y.Z`); it is not part of the version.
+- Each release is tagged with a `vX.Y.Z` tag and documented in `/docs_en/10_release_notes.md` (added, fixed, technical changes, requirements covered).
 
 ## 8. Checklists
 
-**Antes de abrir un PR:**
+**Before opening a PR:**
 
-- [ ] La rama parte de `develop` y el PR apunta a `develop` (a `main` solo si es release/hotfix).
-- [ ] El trabajo está ligado a un Issue y a un requisito (`RF-`/`RNF-`).
-- [ ] Existe/actualicé el doc de funcionalidad correspondiente.
-- [ ] Actualicé la documentación impactada (ver sección 3).
-- [ ] Hay pruebas (`TC-`) para el caso feliz y para errores comunes.
-- [ ] No hay secretos ni dependencias injustificadas.
+- [ ] The branch starts from `develop` and the PR targets `develop` (targets `main` only if it is a release/hotfix).
+- [ ] The work is tied to an Issue and a requirement (`FR-`/`NFR-`).
+- [ ] The corresponding feature doc exists / I updated it.
+- [ ] I updated the affected documentation (see section 3).
+- [ ] There are tests (`TC-`) for the happy path and for common errors.
+- [ ] There are no secrets or unjustified dependencies.
 
-**Antes de cerrar (mergear) un PR:**
+**Before closing (merging) a PR:**
 
-- [ ] Código implementado y pruebas ejecutadas.
-- [ ] Criterios de aceptación cumplidos.
-- [ ] PR revisado y aprobado.
-- [ ] Documentación y release notes actualizadas.
+- [ ] Code implemented and tests run.
+- [ ] Acceptance criteria met.
+- [ ] PR reviewed and approved.
+- [ ] Documentation and release notes updated.
 
-## 9. Antes de aceptar código generado por IA
+## 9. Before accepting AI-generated code
 
-- [ ] Entiendo qué hace el código.
-- [ ] Corresponde al requisito y no agrega complejidad innecesaria.
-- [ ] No introduce dependencias ni secretos indebidos.
-- [ ] No rompe flujos existentes y tiene manejo básico de errores.
-- [ ] Tiene pruebas o una forma clara de validarse.
+- [ ] I understand what the code does.
+- [ ] It matches the requirement and does not add unnecessary complexity.
+- [ ] It does not introduce improper dependencies or secrets.
+- [ ] It does not break existing flows and has basic error handling.
+- [ ] It has tests or a clear way to be validated.
 
 ---
 
-**Recordatorio final (lo más importante):** no toques `main`/`develop` directo, parte de `develop` vía Pull Request, y no programes sin un plan aprobado. Ante cualquier duda o conflicto con estas reglas, **pregunta antes de actuar.**
+**Final reminder (the most important thing):** do not touch `main`/`develop` directly, start from `develop` via Pull Request, and do not code without an approved plan. When in any doubt or conflict with these rules, **ask before acting.**

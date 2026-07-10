@@ -1,51 +1,51 @@
-> Rama destino: **`develop`** (usa `main` solo para release o hotfix).
+> Target branch: **`develop`** (use `main` only for a release or hotfix).
 
-## Funcionalidad / Cambio
+## Feature / Change
 
-<!-- Ej.: FEAT-004 - Exportar registros a CSV -->
+<!-- E.g.: FEAT-004 - Export records to CSV -->
 
-## Issue relacionado
+## Related issue
 
 Closes #
 
-## Requisitos relacionados
+## Related requirements
 
-- RF-XXX
-- RNF-XXX
+- FR-XXX
+- NFR-XXX
 
-## Cambios realizados
+## Changes made
 
 -
 -
 
-## Pruebas
+## Tests
 
 - [ ] TC-XXX
 - [ ] TC-XXX
-- [ ] Prueba manual realizada
+- [ ] Manual test performed
 
-## Documentación actualizada
+## Documentation updated
 
-<!-- Marca los docs que tocó este cambio (Paso 2 de docs/11_flujo_implementacion.md) -->
+<!-- Check the docs touched by this change (Step 2 of docs_en/11_implementation_flow.md) -->
 
-- [ ] 01_vision_producto.md
-- [ ] 02_arquitectura.md
-- [ ] 03_requisitos.md
-- [ ] 04_requisitos_no_funcionales.md
+- [ ] 01_product_vision.md
+- [ ] 02_architecture.md
+- [ ] 03_requirements.md
+- [ ] 04_non_functional_requirements.md
 - [ ] 05_backlog.md
 - [ ] 06_api.md
-- [ ] 07_modelo_datos.md
-- [ ] 08_pruebas.md
-- [ ] 09_uso_ia.md
-- [ ] ADR nuevo en /docs/decisiones/
-- [ ] Doc de funcionalidad en /docs/funcionalidades/
+- [ ] 07_data_model.md
+- [ ] 08_test_plan.md
+- [ ] 09_ai_usage.md
+- [ ] New ADR in /docs_en/decisions/
+- [ ] Feature doc in /docs_en/features/
 - [ ] 10_release_notes.md
 
 ## Checklist
 
-- [ ] La rama sigue la convención del repo (`feature/FEAT-XXX-...`, `fix/BUG-XXX-...`, `hotfix/...`, `docs/...`, `chore/...`, `refactor/...`).
-- [ ] Los commits llevan el ID al frente (`FEAT-XXX: ...`).
-- [ ] No incluyo secretos, `.env` ni dependencias injustificadas.
-- [ ] El plan fue aprobado antes de implementar.
-- [ ] Entiendo todo el código que entrego.
-- [ ] Sé que este PR requiere al menos una revisión aprobada y se integrará con *merge commit* (no squash, no rebase).
+- [ ] The branch follows the repo convention (`feature/FEAT-XXX-...`, `fix/BUG-XXX-...`, `hotfix/...`, `docs/...`, `chore/...`, `refactor/...`).
+- [ ] Commits carry the ID up front (`FEAT-XXX: ...`).
+- [ ] I do not include secrets, `.env`, or unjustified dependencies.
+- [ ] The plan was approved before implementation.
+- [ ] I understand all the code I am delivering.
+- [ ] I know this PR requires at least one approved review and will be integrated with a *merge commit* (no squash, no rebase).
