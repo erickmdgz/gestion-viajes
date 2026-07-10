@@ -1,6 +1,6 @@
 # Requisitos funcionales
 
-Este documento cataloga lo que el sistema debe hacer. Cada requisito funcional (RF) es una capacidad **atómica y verificable**. Para agregar uno, copia `docs/plantillas/plantilla_requisito.md`.
+Este documento cataloga lo que el sistema debe hacer. Cada requisito funcional (RF) es una capacidad **atómica y verificable**. Para agregar uno, copia el bloque de `docs/plantillas/plantilla_requisito.md` y pégalo debajo del índice.
 
 > **Distinción:** el RF define **qué** debe hacer el sistema; el **cómo** (diseño, pantallas, esquema de datos, pasos) vive en el documento de funcionalidad (`docs/plantillas/plantilla_funcionalidad.md`). El avance del trabajo, la estimación y el responsable viven en `05_backlog.md`.
 
@@ -29,33 +29,13 @@ Este documento cataloga lo que el sistema debe hacer. Cada requisito funcional (
 
 ## Índice de requisitos
 
-<!-- Catálogo de un vistazo; el detalle vive en cada bloque RF-XXX. -->
+<!-- Catálogo de un vistazo; el detalle vive en cada bloque RF-XXX de abajo. -->
 
 | ID | Requisito | Prioridad |
 |---|---|---|
-| RF-001 | Inicio de sesión | Alta |
 | RF-XXX | … | Alta / Media / Baja |
 
----
-
-## RF-001 — Inicio de sesión
-
-**Actor:** Usuario registrado · **Prioridad:** Alta · **Estado:** Propuesto
-**Origen:** 01_vision_producto.md (inicio de sesión en el alcance inicial)
-
-### Descripción
-
-El sistema deberá, cuando un usuario registrado envíe su correo y contraseña, validar las credenciales e iniciar una sesión autenticada.
-
-### Criterios de aceptación
-
-- [ ] Dado un usuario activo con credenciales correctas, cuando envía correo y contraseña, entonces el sistema inicia sesión y mantiene la sesión activa. → TC-001
-- [ ] Dado un usuario con credenciales incorrectas, cuando intenta iniciar sesión, entonces el sistema rechaza el acceso y señala "credenciales inválidas". → TC-002
-- [ ] Dado un usuario inactivo con credenciales correctas, cuando intenta iniciar sesión, entonces el sistema rechaza el acceso y señala "usuario inactivo". → TC-004
-
-### Reglas de negocio
-
-- La contraseña nunca se almacena en texto plano; se guarda con hashing seguro (ver RNF-001).
+<!-- Pega aquí cada RF usando docs/plantillas/plantilla_requisito.md -->
 
 ---
 

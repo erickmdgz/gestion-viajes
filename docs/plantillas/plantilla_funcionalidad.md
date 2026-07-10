@@ -26,14 +26,17 @@
 
 ## 6. Criterios de aceptación
 
-- [ ] Criterio 1.
-- [ ] Criterio 2.
-- [ ] Criterio 3.
+Los criterios de aceptación **se definen en el requisito funcional (RF)** correspondiente, no aquí (ver `docs/03_requisitos.md`). Este FEAT solo los referencia:
+
+- RF-XXX → criterios en `docs/03_requisitos.md`
+
+Si al implementar detectas un criterio nuevo, agrégalo primero al RF (con su `TC-`) y luego continúa.
 
 ## 7. Reglas de negocio
 
-- Regla 1.
-- Regla 2.
+Las reglas de negocio **viven en el RF** (`docs/03_requisitos.md`), no se reescriben aquí. Referencia:
+
+- RF-XXX
 
 ## 8. Diseño técnico propuesto
 
