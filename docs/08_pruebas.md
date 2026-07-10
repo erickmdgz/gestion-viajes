@@ -14,9 +14,8 @@ Se probarán los flujos principales del sistema antes de cerrar cada funcionalid
 
 ## Casos de prueba
 
+<!-- Cada TC- se mapea 1:1 a un criterio de aceptación de un RF (ver 03_requisitos.md). -->
+
 | ID | Funcionalidad | Requisito | Caso | Resultado esperado | Estado |
 |---|---|---|---|---|---|
-| TC-001 | Login | RF-001 | Usuario inicia sesión con credenciales válidas | Accede al sistema | Pendiente |
-| TC-002 | Login | RF-001 | Usuario usa contraseña incorrecta | Muestra error | Pendiente |
-| TC-003 | Login | RNF-002 | Usuario no autenticado entra a ruta privada | Acceso bloqueado | Pendiente |
-| TC-004 | Login | RF-001 | Usuario inactivo con credenciales válidas intenta iniciar sesión | Acceso rechazado con mensaje "usuario inactivo" | Pendiente |
+| TC-XXX | … | RF-XXX | … | … | Pendiente |
