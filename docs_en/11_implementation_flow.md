@@ -2,9 +2,9 @@
 
 ## Purpose
 
-This document defines **how Claude (Claude Code) must work when the team asks it to implement something**. The goal is that it first **plans**, then **identifies which documentation the change affects**, and only then **develops**, maintaining the traceability required by `guia_documentacion_desarrollo_saludable_ia.md`.
+This document defines **how Claude (Claude Code) must work when the team asks it to implement something**. The goal is that it first **plans**, then **identifies which documentation the change affects**, and only then **develops**, maintaining the traceability the project requires (Need → Requirement → Design → Implementation → Test → Release).
 
-It extends (does not replace) the "Flow for creating a new feature" section of the parent guide, adding two mandatory steps: **plan with human approval** and **identify the documentation impact before coding**.
+It adds two mandatory steps to the standard feature flow: **plan with human approval** and **identify the documentation impact before coding**.
 
 Golden rule: **no code change begins without a plan approved by a person.**
 

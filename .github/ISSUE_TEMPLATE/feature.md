@@ -1,43 +1,43 @@
 ---
-name: Funcionalidad (FEAT)
-about: Proponer una nueva funcionalidad
+name: Feature (FEAT)
+about: Propose a new feature
 title: "FEAT-XXX: "
 labels: enhancement
 assignees: ""
 ---
 
-## Resumen
+## Summary
 
-¿Qué se quiere construir?
+What do you want to build?
 
-## Problema o necesidad
+## Problem or need
 
-¿Qué problema resuelve y para quién?
+What problem does it solve, and for whom?
 
-## Requisitos relacionados
+## Related requirements
 
-- RF-XXX
-- RNF-XXX
+- FR-XXX
+- NFR-XXX
 
-## Criterios de aceptación
+## Acceptance criteria
 
-- [ ] Criterio 1.
-- [ ] Criterio 2.
-- [ ] Criterio 3.
+- [ ] Criterion 1.
+- [ ] Criterion 2.
+- [ ] Criterion 3.
 
-## Documentación que probablemente se toque
+## Documentation likely to be touched
 
-<!-- Lista rápida; la lista completa y canónica está en el Paso 2 de docs/11_flujo_implementacion.md -->
+<!-- Quick list; the complete, canonical list is in Step 2 of docs_en/11_implementation_flow.md -->
 
-- [ ] 03_requisitos.md
-- [ ] 04_requisitos_no_funcionales.md
+- [ ] 03_requirements.md
+- [ ] 04_non_functional_requirements.md
 - [ ] 05_backlog.md
 - [ ] 06_api.md
-- [ ] 07_modelo_datos.md
-- [ ] 08_pruebas.md
+- [ ] 07_data_model.md
+- [ ] 08_test_plan.md
 - [ ] 10_release_notes.md
-- [ ] Doc de funcionalidad en /docs/funcionalidades/
+- [ ] Feature doc in /docs_en/features/
 
-## Notas
+## Notes
 
-Contexto adicional, dependencias, alcance.
+Additional context, dependencies, scope.

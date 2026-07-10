@@ -1,37 +1,37 @@
 ---
 name: Bug (BUG)
-about: Reportar un error
+about: Report a defect
 title: "BUG-XXX: "
 labels: bug
 assignees: ""
 ---
 
-## Descripción
+## Description
 
-¿Qué está fallando?
+What is failing?
 
-## Requisito o funcionalidad relacionada
+## Related requirement or feature
 
-- RF-XXX / RNF-XXX / FEAT-XXX
+- FR-XXX / NFR-XXX / FEAT-XXX
 
-## Pasos para reproducir
+## Steps to reproduce
 
 1.
 2.
 3.
 
-## Resultado actual
+## Current result
 
-¿Qué ocurre hoy?
+What happens today?
 
-## Resultado esperado
+## Expected result
 
-¿Qué debería ocurrir?
+What should happen?
 
-## Prioridad
+## Priority
 
-Alta / Media / Baja.
+High / Medium / Low.
 
-## Notas
+## Notes
 
-Entorno, capturas, logs (sin incluir secretos).
+Environment, screenshots, logs (do not include secrets).
