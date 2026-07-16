@@ -6,6 +6,7 @@
 |---|---|---|---|---|---|
 | FEAT-001 | Feature | F1 interest registration form | High | In progress | FR-001 |
 | FEAT-002 | Feature | F2 general information tracking | High | In progress | FR-002 |
+| ADR-002 | Technical | Local-first stack + architecture baseline | High | Done | NF-4/8/9/10/11 |
 
 ## Allowed types
 
