@@ -110,6 +110,22 @@ A piece of distributed content for the confirmed group (FR-014, FR-015; PRD §12
 | content_ref | String | Yes | Link or file with the shareable content |
 | published_at | DateTime | No | When it was published |
 
+## Entity: Visit
+
+A company/institution visit target tracked through a pipeline; feeds the agency brief (FR-017,
+FR-018; PRD §10).
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| id | UUID | Yes | Unique identifier |
+| trip_id | UUID | Yes | Trip the visit belongs to |
+| target_name | String | Yes | Company or institution name |
+| target_type | String | No | company / institution |
+| status | String | Yes | Pipeline stage: contact / confirmed / scheduled |
+| scheduled_date | Date | No | Day of the visit (set on confirmation) |
+| scheduled_time | String | No | Time of the visit (set on confirmation) |
+| notes | String | No | Free-text notes |
+
 ## Rules
 
 - The `student_id` follows the pattern `A########` (letter `A` + 8 digits).
@@ -130,3 +146,5 @@ A piece of distributed content for the confirmed group (FR-014, FR-015; PRD §12
 - `PriceTier` bands are contiguous and non-overlapping; the confirmed count feeding the tier is
   participants **at or past** `Confirmed`, excluding Withdrawn and the accompanying professor
   (FR-013, §9.1). `[PROPOSED — confirm]`
+- The agency visit brief (FR-018) is generated from `Visit` records in `confirmed`/`scheduled`
+  status; visits still at `contact` are excluded.
