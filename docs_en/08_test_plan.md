@@ -40,3 +40,15 @@ The system's main flows will be tested before closing each feature.
 | TC-020 | Funnel core | FR-009 | Board records a nudge on an overdue participant | `last_reminded_at` set to today; reminder counter increments; shows "nudged today" | Pending |
 | TC-021 | Funnel core | FR-009 | Board snoozes an overdue participant for N days | Participant does not reappear on the daily list until N days pass | Pending |
 | TC-022 | Funnel core | FR-009 | Board dismisses today's nudge on an overdue participant | Participant absent from today's list; reappears the next day | Pending |
+| TC-023 | Agency layer | FR-010 | Board uploads a document with type, version label and date | Document registered and listed under its type | Pending |
+| TC-024 | Agency layer | FR-010 | Board saves a document missing type or version label | Rejected; the missing field is flagged | Pending |
+| TC-025 | Agency layer | FR-011 | Three budget versions; board marks v3 current | v1 and v2 show "superseded"; only v3 is current and served to distribution | Pending |
+| TC-026 | Agency layer | FR-011 | Type already has a current version; another is marked current | Exactly one remains current; the previous becomes superseded | Pending |
+| TC-027 | Agency layer | FR-012 | Board records a free-text changelog on a version | Note stored and shown with that version | Pending |
+| TC-028 | Agency layer | FR-013 | Tiers [10–19:$X],[20–29:$Y], 20 confirmed; a 21st confirms | Displayed tier stays [20–29] | Pending |
+| TC-029 | Agency layer | FR-013 | Same tiers; a confirmed participant reverted below 20 | Tier re-resolves to [10–19] | Pending |
+| TC-030 | Agency layer | FR-013 | Confirmed count below the smallest tier | Tool shows "no tier / below minimum" (no guess) | Pending |
+| TC-031 | Distribution | FR-014 | Board publishes the current itinerary | Shareable link/file produced for the confirmed group, pointing to the current version | Pending |
+| TC-032 | Distribution | FR-014 | Current itinerary superseded by a new current version; shared link opened | Link serves the new current version | Pending |
+| TC-033 | Distribution | FR-015 | Board publishes a notice / payment-date reminder | Available as shareable content | Pending |
+| TC-034 | Distribution | FR-016 | Board requests promotional content | Draft content ideas and image prompts generated | Pending |
