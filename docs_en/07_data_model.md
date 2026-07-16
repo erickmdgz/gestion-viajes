@@ -1,5 +1,25 @@
 # Data model
 
+## Entity: Trip
+
+A mission/trip whose participants move through the funnel. Holds the per-transition deadlines that
+drive overdue detection (FR-003, FR-006). Aligned with PRD §7.1.
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| id | UUID | Yes | Unique identifier |
+| name | String | Yes | Trip / mission name |
+| registration_close | Date | No | Trip-level "registration close" date (deadline source) |
+| contract_date | Date | No | Trip-level contract deadline |
+| first_payment_date | Date | No | Trip-level first-payment deadline |
+| flights_date | Date | No | Trip-level flights/passport deadline |
+| grace_period_days | Integer | Yes | Days after a deadline before "overdue"; default 0 `[PROPOSED — confirm]` |
+| timezone | String | Yes | Board-local timezone `[PROPOSED — confirm]` |
+
+Per-transition deadlines can be **absolute** (the trip-level dates above) or **relative** (N days
+after entering a state), per §7.1; some transitions are board-action only and carry no participant
+deadline (e.g. Registered (F1) → Contract sent).
+
 ## Entity: Participant
 
 A student moving through the Solanum funnel toward a confirmed trip seat. Fields marked **(F1)** are
@@ -33,6 +53,16 @@ completion (FEAT-002). Aligned with PRD §16.
 | F2_completed_at | DateTime | No | F2 status | When F2 was marked complete |
 | F2_verified_by | String | No | F2 status | Board member who verified F2 (optional audit) |
 | F2_verified_at | DateTime | No | F2 status | When F2 was verified (optional audit) |
+| contract_signed | Boolean | No | Funnel | Flag set by the board (FR-005) |
+| deposit_confirmed | Boolean | No | Funnel | Flag set by the board (FR-005) |
+| confirmed | Boolean | No | Derived | Auto-derived: `contract_signed` AND `deposit_confirmed` (§6.3, FR-005) |
+| withdrawn | Boolean | No | Funnel | Terminal Withdrawn/Declined flag (§6.4) |
+| drop_reason | String | No | Funnel | Optional free-text drop reason (§6.4) |
+| snoozed_until | DateTime | No | Reminders | Snoozed until this date; hidden from the daily push list (FR-009) |
+| last_reminded_at | DateTime | No | Reminders | When the participant was last nudged (FR-009) |
+| reminder_count | Integer | No | Reminders | Per-participant nudge counter for metrics (FR-009, §18) |
+| state_changed_at | DateTime | No | System | Timestamp of the last state change (audit, FR-005) |
+| state_changed_by | String | No | System | Operator who made the last state change (audit, FR-005) |
 
 ### Funnel states (`current_state`)
 
@@ -50,3 +80,9 @@ This feature set (FEAT-001/FEAT-002) sets `Registered (F1)` and `F2 complete`.
 - **F2 sensitive data is NOT stored in Solanum.** Only the F2 status fields above are persisted; the
   actual F2 answers/files (passport scan, birth date, medical conditions, diet, etc.) remain in an
   external tool controlled by the organizing team. See `decisions/ADR-001_f2_sensitive_data_not_stored.md`.
+- **`confirmed` is derived, never hand-set:** it is true only while `contract_signed` AND
+  `deposit_confirmed` are both true (§6.3, FR-005).
+- **Dropping ≠ deleting:** a dropped participant is marked `withdrawn` (record retained for funnel
+  metrics), not deleted (§6.4).
+- Every state change records `state_changed_at` and `state_changed_by` (audit trail, FR-005).
+- Reminders store only `last_reminded_at` and `reminder_count` — never the message body (§7.2).
