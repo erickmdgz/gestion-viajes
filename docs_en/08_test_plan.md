@@ -52,3 +52,7 @@ The system's main flows will be tested before closing each feature.
 | TC-032 | Distribution | FR-014 | Current itinerary superseded by a new current version; shared link opened | Link serves the new current version | Pending |
 | TC-033 | Distribution | FR-015 | Board publishes a notice / payment-date reminder | Available as shareable content | Pending |
 | TC-034 | Distribution | FR-016 | Board requests promotional content | Draft content ideas and image prompts generated | Pending |
+| TC-035 | Visits | FR-017 | Board advances a visit through contact → confirmation → scheduled | Status recorded at each stage | Pending |
+| TC-036 | Visits | FR-017 | Board sets a day and time on a confirmed visit | Scheduled day and time stored on the visit | Pending |
+| TC-037 | Visits | FR-018 | Board generates a visit brief with confirmed/scheduled visits | Brief produced containing those visits | Pending |
+| TC-038 | Visits | FR-018 | A visit still at "contact"; board generates the brief | That unconfirmed visit is excluded from the brief | Pending |
