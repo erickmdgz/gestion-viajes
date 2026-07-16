@@ -42,6 +42,13 @@ This document catalogs what the system must do. Each functional requirement (FR)
 | FR-007 | Generate the reminder message for the overdue transition | High |
 | FR-008 | Produce the daily push list | High |
 | FR-009 | Reminder cadence, snooze/dismiss and nudge tracking | High |
+| FR-010 | Register agency documents with version label and date | High |
+| FR-011 | Mark exactly one document version as current | High |
+| FR-012 | Record a changelog between document versions | Medium |
+| FR-013 | Live price tier by confirmed group size | High |
+| FR-014 | Publish the current itinerary as a shareable link/file | High |
+| FR-015 | Publish notices and payment-date reminders | Medium |
+| FR-016 | Generate promotional content ideas and image prompts | Medium |
 
 <!-- Paste each FR here using docs_en/templates/template_requirement.md -->
 
@@ -263,6 +270,144 @@ reminder counter.
 - Cadence: once per day until the state advances, or the participant is snoozed or dropped. `[PROPOSED — confirm]`
 - Only the reminder count and `last_reminded_at` are stored, not the message body (§7.2; supports the
   §18 metrics without retaining message text).
+
+---
+
+## FR-010 — Register agency documents with version label and date
+
+**Actor:** Exec board · **Priority:** High · **Status:** Approved
+**Origin:** PRD §12 (F-10), §9 (agency document layer)
+
+### Description
+
+The system shall, when the board uploads an agency document, register it under its document type
+(e.g. itinerary, budget) with a version label and a date.
+
+### Acceptance criteria
+
+- [ ] Given a trip, when the board uploads a document with a type, version label and date, then it is registered and listed under its type. → TC-023
+- [ ] Given a document upload missing a type or version label, when the board saves, then it is rejected and the missing field is flagged. → TC-024
+
+### Business rules
+
+- This **manages** version chaos rather than eliminating it (the agency keeps its PDF flow — §9,
+  agency-as-receiver principle).
+
+---
+
+## FR-011 — Mark exactly one document version as current
+
+**Actor:** Exec board · **Priority:** High · **Status:** Approved
+**Origin:** PRD §12 (F-11, §12.6 criteria), §9
+
+### Description
+
+The system shall, when the board marks a document version as "current", ensure exactly one version
+per document type is current and show the others as superseded.
+
+### Acceptance criteria
+
+- [ ] Given three budget versions, when the board marks v3 current, then v1 and v2 show "superseded" and only v3 is current for that type (and is the one served to distribution, FR-014). → TC-025
+- [ ] Given a type that already has a current version, when another version of the same type is marked current, then exactly one remains current (the previous becomes superseded). → TC-026
+
+### Business rules
+
+- Exactly one `is_current = true` per (trip, document type).
+
+---
+
+## FR-012 — Record a changelog between document versions
+
+**Actor:** Exec board · **Priority:** Medium · **Status:** Approved
+**Origin:** PRD §12 (F-12), §9
+
+### Description
+
+The system shall, when the board records what changed for a document version, store a free-text
+changelog note and show it with that version.
+
+### Acceptance criteria
+
+- [ ] Given a document version, when the board records a free-text changelog note, then the note is stored and shown with that version. → TC-027
+
+---
+
+## FR-013 — Live price tier by confirmed group size
+
+**Actor:** System (trigger) · **Priority:** High · **Status:** Approved
+**Origin:** PRD §12 (F-13, §12.6 criteria), §9.1 (count & tier resolution)
+
+### Description
+
+The system shall, given price tiers defined by group size, resolve and display the tier the current
+confirmed count falls into, live as the funnel fills.
+
+### Acceptance criteria
+
+- [ ] Given tiers [10–19: $X] and [20–29: $Y] and 20 confirmed, when a 21st participant confirms, then the displayed tier stays [20–29]. → TC-028
+- [ ] Given the same tiers, when a confirmed participant is reverted below 20, then the tier re-resolves to [10–19]. → TC-029
+- [ ] Given the confirmed count is below the smallest tier, when the tier resolves, then the tool shows "no tier / below minimum" rather than guessing. → TC-030
+
+### Business rules
+
+- **Confirmed count basis** `[PROPOSED — confirm]`: participants **at or past** `Confirmed`
+  (cumulative — reached ≥ Confirmed), **excluding** Withdrawn/Declined. Do **not** use
+  `current_state == Confirmed` (that would wrongly decrement as people advance).
+- The accompanying professor is **excluded** from the confirmed count for tier resolution. `[PROPOSED — confirm]`
+- Tiers must be **contiguous and non-overlapping**; boundary inclusivity is `min ≤ count ≤ max`. `[PROPOSED — confirm]`
+
+---
+
+## FR-014 — Publish the current itinerary as a shareable link/file
+
+**Actor:** Exec board · **Priority:** High · **Status:** Approved
+**Origin:** PRD §12 (F-15), §9, §12.3 (distribution)
+
+### Description
+
+The system shall, when the board publishes the itinerary, produce a shareable link or file for the
+confirmed group that serves the **current** itinerary version (FR-011).
+
+### Acceptance criteria
+
+- [ ] Given a current itinerary document, when the board publishes it, then a shareable link/file is produced for the confirmed group pointing to the current version. → TC-031
+- [ ] Given the current itinerary is later superseded by a new current version, when the shared link is opened, then it serves the new current version. → TC-032
+
+---
+
+## FR-015 — Publish notices and payment-date reminders
+
+**Actor:** Exec board · **Priority:** Medium · **Status:** Approved
+**Origin:** PRD §12 (F-16), §12.3
+
+### Description
+
+The system shall, when the board publishes a notice or a payment-plan-date reminder, make it
+available as shareable content.
+
+### Acceptance criteria
+
+- [ ] Given a notice or payment-plan-date reminder, when the board publishes it, then it is available as shareable content. → TC-033
+
+---
+
+## FR-016 — Generate promotional content ideas and image prompts
+
+**Actor:** Exec board · **Priority:** Medium · **Status:** Approved
+**Origin:** PRD §12 (F-16.1), §12.3
+
+### Description
+
+The system shall, when the board requests promotional material, generate draft content ideas and
+image prompts for the board to review (human-in-the-loop; the board decides what to use).
+
+### Acceptance criteria
+
+- [ ] Given a promotional need, when the board requests content, then the tool generates draft content ideas and image prompts. → TC-034
+
+### Business rules
+
+- Output is a draft proposal; a human decides and produces the final material (never-sends principle).
 
 ---
 
