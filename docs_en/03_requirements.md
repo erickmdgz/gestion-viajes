@@ -51,6 +51,14 @@ This document catalogs what the system must do. Each functional requirement (FR)
 | FR-016 | Generate promotional content ideas and image prompts | Medium |
 | FR-017 | Track visit targets through a contact→confirmation→schedule pipeline | Medium |
 | FR-018 | Generate a visit brief for the agency from confirmed visits | Medium |
+| FR-019 | View the funnel in bulk as counts per state | Medium |
+| FR-020 | Import participants from a CSV or form (with dedup) | Medium |
+| FR-021 | Operational roster with no sensitive fields | High |
+| FR-022 | Flag the accompanying professor as a required attendee | Medium |
+| FR-023 | Edit a participant's fields | High |
+| FR-024 | Delete a participant created in error | High |
+| FR-025 | Uniqueness and duplicate detection | High |
+| FR-026 | Re-import merge by uniqueness key | Medium |
 
 <!-- Paste each FR here using docs_en/templates/template_requirement.md -->
 
@@ -444,6 +452,149 @@ confirmed/scheduled visits.
 
 - [ ] Given one or more confirmed/scheduled visits, when the board generates a visit brief, then a brief is produced containing those visits. → TC-037
 - [ ] Given a visit still at "contact" (not confirmed), when the brief is generated, then that visit is excluded from the brief. → TC-038
+
+---
+
+## FR-019 — View the funnel in bulk as counts per state
+
+**Actor:** Exec board · **Priority:** Medium · **Status:** Approved
+**Origin:** PRD §12 (F-7), §8 (funnel view)
+
+### Description
+
+The system shall, when the board opens the funnel view, display the count of participants in each
+state, excluding `Withdrawn/Declined` from the active counts.
+
+### Acceptance criteria
+
+- [ ] Given participants across several states (including one Withdrawn/Declined), when the board opens the funnel view, then a count per state is shown and the Withdrawn/Declined one is excluded from the active counts. → TC-039
+
+---
+
+## FR-020 — Import participants from a CSV or form
+
+**Actor:** Exec board · **Priority:** Medium · **Status:** Approved
+**Origin:** PRD §12 (F-8), §11
+
+### Description
+
+The system shall, when the board imports participants from a CSV or the existing capture form, create
+the participant records, flagging duplicates instead of silently creating them (per FR-025).
+
+### Acceptance criteria
+
+- [ ] Given a CSV of new participants, when the board imports it, then a participant record is created for each new row. → TC-040
+- [ ] Given a CSV row whose uniqueness key matches an existing participant, when the board imports it, then it is flagged as a duplicate instead of creating a second record. → TC-041
+
+---
+
+## FR-021 — Operational roster with no sensitive fields
+
+**Actor:** Exec board · **Priority:** High · **Status:** Approved
+**Origin:** PRD §12 (F-19), §10, §14
+
+### Description
+
+The system shall, when the board views the operational roster, list participants using non-sensitive
+fields only (names and contact handles), with no F2 sensitive data.
+
+### Acceptance criteria
+
+- [ ] Given participants exist, when the board views the operational roster, then it lists them using non-sensitive fields only and no F2 sensitive field is present. → TC-042
+
+### Business rules
+
+- Names and contact handles are personal data governed by §14 even though no special-category data is
+  stored (ADR-001, NF-6).
+
+---
+
+## FR-022 — Flag the accompanying professor as a required attendee
+
+**Actor:** Exec board · **Priority:** Medium · **Status:** Approved
+**Origin:** PRD §12 (F-20), §3, §9.1
+
+### Description
+
+The system shall, when the board flags a participant as the accompanying professor, mark them a
+required attendee for the trip.
+
+### Acceptance criteria
+
+- [ ] Given a participant, when the board flags them as the accompanying professor, then they are marked a required attendee and are excluded from the confirmed count used for price-tier resolution (FR-013). → TC-043
+
+---
+
+## FR-023 — Edit a participant's fields
+
+**Actor:** Exec board · **Priority:** High · **Status:** Approved
+**Origin:** PRD §12 (F-24), §11, NF-14 (ARCO)
+
+### Description
+
+The system shall, when the board edits a participant's fields (e.g. name, contact handle), persist the
+updated values.
+
+### Acceptance criteria
+
+- [ ] Given a participant, when the board edits a field (e.g. contact handle) and saves, then the updated value is persisted (rectification, NF-14). → TC-044
+
+---
+
+## FR-024 — Delete a participant created in error
+
+**Actor:** Exec board · **Priority:** High · **Status:** Approved
+**Origin:** PRD §12 (F-25), §11, §6.4
+
+### Description
+
+The system shall, when the board deletes a participant created in error, remove the participant
+record.
+
+### Acceptance criteria
+
+- [ ] Given a participant created in error, when the board deletes it, then the record is removed. → TC-045
+
+### Business rules
+
+- Delete is for **erroneous records only**. Genuine drops use the `Withdrawn/Declined` state (§6.4,
+  FR-005), which retains the record so funnel baselines stay intact.
+
+---
+
+## FR-025 — Uniqueness and duplicate detection
+
+**Actor:** System (trigger) · **Priority:** High · **Status:** Approved
+**Origin:** PRD §12 (F-26), §11
+
+### Description
+
+The system shall, on manual add (FR-004) or import (FR-020), detect when a participant's uniqueness
+key already exists and flag the duplicate instead of silently creating a second record.
+
+### Acceptance criteria
+
+- [ ] Given an existing participant with a contact handle, when the board adds another participant with the same handle, then the tool flags the duplicate instead of creating a second record. → TC-046
+
+### Business rules
+
+- The uniqueness key is the **contact handle**. `[PROPOSED — confirm]`
+
+---
+
+## FR-026 — Re-import merge by uniqueness key
+
+**Actor:** Exec board · **Priority:** Medium · **Status:** Approved
+**Origin:** PRD §12 (F-27), §11
+
+### Description
+
+The system shall, when the board re-imports a CSV, update existing participant records matched by the
+uniqueness key rather than duplicating them.
+
+### Acceptance criteria
+
+- [ ] Given a participant already exists, when a re-imported CSV contains a row with the same uniqueness key, then the existing record is updated and no duplicate is created. → TC-047
 
 ---
 
