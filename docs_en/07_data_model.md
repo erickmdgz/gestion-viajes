@@ -70,6 +70,46 @@ Canonical flow (PRD §6): `Interested → Registered (F1) → Contract sent → 
 confirmed → Confirmed → F2 complete → Ready for flights`, plus the terminal `Withdrawn/Declined`.
 This feature set (FEAT-001/FEAT-002) sets `Registered (F1)` and `F2 complete`.
 
+## Entity: AgencyDocument
+
+A versioned document received from the agency (itinerary, budget). Manages version chaos (FR-010,
+FR-011, FR-012; PRD §9).
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| id | UUID | Yes | Unique identifier |
+| trip_id | UUID | Yes | Trip the document belongs to |
+| type | String | Yes | Document type (e.g. itinerary, budget) |
+| version_label | String | Yes | Version label |
+| date | Date | Yes | Version date |
+| is_current | Boolean | Yes | Whether this is the current version for its type (default false) |
+| changelog | String | No | Free-text note of what changed vs. the previous version (FR-012) |
+| file_ref | String | No | Link or file reference to the document |
+
+## Entity: PriceTier
+
+An agency price band by group size; drives the live tier resolution (FR-013; PRD §9.1).
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| id | UUID | Yes | Unique identifier |
+| trip_id | UUID | Yes | Trip the tier belongs to |
+| min_size | Integer | Yes | Lower bound (inclusive) |
+| max_size | Integer | Yes | Upper bound (inclusive) |
+| price | Decimal | Yes | Per-head price for this band |
+
+## Entity: Notice
+
+A piece of distributed content for the confirmed group (FR-014, FR-015; PRD §12.3).
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| id | UUID | Yes | Unique identifier |
+| trip_id | UUID | Yes | Trip the notice belongs to |
+| type | String | Yes | itinerary / notice / payment-reminder |
+| content_ref | String | Yes | Link or file with the shareable content |
+| published_at | DateTime | No | When it was published |
+
 ## Rules
 
 - The `student_id` follows the pattern `A########` (letter `A` + 8 digits).
@@ -86,3 +126,7 @@ This feature set (FEAT-001/FEAT-002) sets `Registered (F1)` and `F2 complete`.
   metrics), not deleted (§6.4).
 - Every state change records `state_changed_at` and `state_changed_by` (audit trail, FR-005).
 - Reminders store only `last_reminded_at` and `reminder_count` — never the message body (§7.2).
+- Exactly one `AgencyDocument.is_current = true` per (trip, type); others are superseded (FR-011).
+- `PriceTier` bands are contiguous and non-overlapping; the confirmed count feeding the tier is
+  participants **at or past** `Confirmed`, excluding Withdrawn and the accompanying professor
+  (FR-013, §9.1). `[PROPOSED — confirm]`
