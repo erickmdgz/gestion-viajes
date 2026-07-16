@@ -56,3 +56,12 @@ The system's main flows will be tested before closing each feature.
 | TC-036 | Visits | FR-017 | Board sets a day and time on a confirmed visit | Scheduled day and time stored on the visit | Pending |
 | TC-037 | Visits | FR-018 | Board generates a visit brief with confirmed/scheduled visits | Brief produced containing those visits | Pending |
 | TC-038 | Visits | FR-018 | A visit still at "contact"; board generates the brief | That unconfirmed visit is excluded from the brief | Pending |
+| TC-039 | Funnel view | FR-019 | Participants across states (incl. one Withdrawn); board opens funnel view | Count per state shown; Withdrawn/Declined excluded from active counts | Pending |
+| TC-040 | Data mgmt | FR-020 | Board imports a CSV of new participants | A participant record is created for each new row | Pending |
+| TC-041 | Data mgmt | FR-020 | Import row whose uniqueness key matches an existing participant | Flagged as duplicate; no second record created | Pending |
+| TC-042 | Roster | FR-021 | Board views the operational roster | Lists participants with non-sensitive fields only; no F2 sensitive field present | Pending |
+| TC-043 | Roster | FR-022 | Board flags a participant as accompanying professor | Marked required attendee; excluded from the confirmed count for tier resolution | Pending |
+| TC-044 | Data mgmt | FR-023 | Board edits a participant field (e.g. contact handle) | Updated value persisted | Pending |
+| TC-045 | Data mgmt | FR-024 | Board deletes a participant created in error | Record removed | Pending |
+| TC-046 | Data mgmt | FR-025 | Board adds a participant with an existing contact handle | Duplicate flagged; no second record created | Pending |
+| TC-047 | Data mgmt | FR-026 | Re-imported CSV row matches an existing uniqueness key | Existing record updated; no duplicate created | Pending |
