@@ -4,7 +4,7 @@
 
 | ID | Type | Name | Priority | Status | Related requirement |
 |---|---|---|---|---|---|
-| FEAT-XXX | Feature | … | High / Medium / Low | Pending | FR-XXX |
+| ADR-002 | Technical | Local-first stack + architecture baseline | High | Done | NF-4/8/9/10/11 |
 
 ## Allowed types
 
