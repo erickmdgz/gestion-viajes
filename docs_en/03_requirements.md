@@ -49,6 +49,8 @@ This document catalogs what the system must do. Each functional requirement (FR)
 | FR-014 | Publish the current itinerary as a shareable link/file | High |
 | FR-015 | Publish notices and payment-date reminders | Medium |
 | FR-016 | Generate promotional content ideas and image prompts | Medium |
+| FR-017 | Track visit targets through a contact→confirmation→schedule pipeline | Medium |
+| FR-018 | Generate a visit brief for the agency from confirmed visits | Medium |
 
 <!-- Paste each FR here using docs_en/templates/template_requirement.md -->
 
@@ -408,6 +410,40 @@ image prompts for the board to review (human-in-the-loop; the board decides what
 ### Business rules
 
 - Output is a draft proposal; a human decides and produces the final material (never-sends principle).
+
+---
+
+## FR-017 — Track visit targets through a contact→confirmation→schedule pipeline
+
+**Actor:** Exec board · **Priority:** Medium · **Status:** Approved
+**Origin:** PRD §12 (F-17), §10 (visit coordination)
+
+### Description
+
+The system shall, when the board tracks a company or institution visit target, move it through a
+contact → confirmation → scheduled (day and time) pipeline and record its status and schedule.
+
+### Acceptance criteria
+
+- [ ] Given a visit target, when the board advances it through contact → confirmation → scheduled, then its status is recorded at each stage. → TC-035
+- [ ] Given a visit at "confirmation", when the board sets a day and time, then the scheduled day and time are stored on the visit. → TC-036
+
+---
+
+## FR-018 — Generate a visit brief for the agency from confirmed visits
+
+**Actor:** Exec board · **Priority:** Medium · **Status:** Approved
+**Origin:** PRD §12 (F-18), §10 (visit coordination)
+
+### Description
+
+The system shall, when the board generates a visit brief, produce a brief for the agency from the
+confirmed/scheduled visits.
+
+### Acceptance criteria
+
+- [ ] Given one or more confirmed/scheduled visits, when the board generates a visit brief, then a brief is produced containing those visits. → TC-037
+- [ ] Given a visit still at "contact" (not confirmed), when the brief is generated, then that visit is excluded from the brief. → TC-038
 
 ---
 
