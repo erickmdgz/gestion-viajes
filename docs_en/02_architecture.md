@@ -29,6 +29,19 @@ Operator (mobile) → Next.js (UI + API routes) → Prisma → SQLite
 The daily push list and the overdue-transition flags are **computed on demand** when the operator
 opens the view; a background scheduler is deferred to the deploy phase.
 
+## Project structure
+
+Implemented in FEAT-003 (baseline):
+
+```txt
+prisma/          # schema.prisma (SQLite datasource) + seed.ts
+src/
+  app/           # App Router: pages (/, /login, /dashboard) + api/auth/[...nextauth]
+  lib/           # prisma.ts (client singleton), auth.ts (Auth.js config)
+  middleware.ts  # route protection (redirects unauthenticated /dashboard* to /login)
+docs_en/         # living product documentation
+```
+
 ## Main modules
 
 Following the "generic core + context modules" principle (PRD §5): a generic core, plus modules that

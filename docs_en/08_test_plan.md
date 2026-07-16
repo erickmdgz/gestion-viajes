@@ -65,3 +65,7 @@ The system's main flows will be tested before closing each feature.
 | TC-045 | Data mgmt | FR-024 | Board deletes a participant created in error | Record removed | Pending |
 | TC-046 | Data mgmt | FR-025 | Board adds a participant with an existing contact handle | Duplicate flagged; no second record created | Pending |
 | TC-047 | Data mgmt | FR-026 | Re-imported CSV row matches an existing uniqueness key | Existing record updated; no duplicate created | Pending |
+| TC-048 | FEAT-003 | NFR-002 | Operator logs in with valid seeded credentials | Session created; `/dashboard` reachable (HTTP 200) | Passed |
+| TC-049 | FEAT-003 | NFR-002 | Login with a wrong password | Rejected; no session created (`/api/auth/session` is null) | Passed |
+| TC-050 | FEAT-003 | NFR-002 | Request `/dashboard` without a session | Redirects (307) to `/login?callbackUrl=/dashboard` | Passed |
+| TC-051 | FEAT-003 | NFR-001 | Inspect the stored operator after seeding | `passwordHash` is a bcrypt hash, not plaintext | Passed |
