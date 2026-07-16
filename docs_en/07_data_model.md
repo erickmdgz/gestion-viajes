@@ -63,6 +63,7 @@ completion (FEAT-002). Aligned with PRD §16.
 | reminder_count | Integer | No | Reminders | Per-participant nudge counter for metrics (FR-009, §18) |
 | state_changed_at | DateTime | No | System | Timestamp of the last state change (audit, FR-005) |
 | state_changed_by | String | No | System | Operator who made the last state change (audit, FR-005) |
+| is_accompanying_professor | Boolean | No | Funnel | Marks the required accompanying professor; excluded from the confirmed count (FR-022) |
 
 ### Funnel states (`current_state`)
 
@@ -148,3 +149,9 @@ FR-018; PRD §10).
   (FR-013, §9.1). `[PROPOSED — confirm]`
 - The agency visit brief (FR-018) is generated from `Visit` records in `confirmed`/`scheduled`
   status; visits still at `contact` are excluded.
+- The operational roster (FR-021) is a view of `Participant` restricted to non-sensitive fields
+  (names, contact handles); it never exposes F2 sensitive data.
+- **Uniqueness key = contact handle** `[PROPOSED — confirm]`: on manual add (FR-004) and import
+  (FR-020) a matching key is flagged as a duplicate (FR-025); re-import updates by key (FR-026).
+- **Delete ≠ drop:** deletion (FR-024) is for erroneous records only; genuine drops use `withdrawn`
+  (§6.4). `trip_id` scopes all funnel/roster/tier queries (multi-trip) `[PROPOSED — confirm]`.
