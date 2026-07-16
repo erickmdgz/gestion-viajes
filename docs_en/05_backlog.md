@@ -4,7 +4,8 @@
 
 | ID | Type | Name | Priority | Status | Related requirement |
 |---|---|---|---|---|---|
-| FEAT-XXX | Feature | … | High / Medium / Low | Pending | FR-XXX |
+| FEAT-001 | Feature | F1 interest registration form | High | In progress | FR-001 |
+| FEAT-002 | Feature | F2 general information tracking | High | In progress | FR-002 |
 
 ## Allowed types
 
