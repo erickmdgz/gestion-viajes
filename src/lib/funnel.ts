@@ -8,6 +8,7 @@ export const FUNNEL_STATES = {
   CONTRACT_SIGNED: "Contract signed",
   DEPOSIT_CONFIRMED: "Deposit confirmed",
   CONFIRMED: "Confirmed",
+  F2_COMPLETE: "F2 complete",
   WITHDRAWN: "Withdrawn/Declined",
 } as const;
 

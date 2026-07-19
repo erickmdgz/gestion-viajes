@@ -73,6 +73,9 @@ model Participant {
   confirmed            Boolean   @default(false)
   withdrawn            Boolean   @default(false)
   dropReason           String?
+  f2Complete           Boolean   @default(false)
+  f2CompletedAt        DateTime?
+  f2VerifiedBy         String?
   snoozedUntil         DateTime?
   lastRemindedAt       DateTime?
   reminderCount        Int       @default(0)

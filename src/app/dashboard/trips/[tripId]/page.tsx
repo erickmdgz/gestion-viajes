@@ -4,10 +4,15 @@ import { revalidatePath } from "next/cache";
 import { getTripWithParticipants } from "@/lib/trips";
 import { isParticipantOverdue, FUNNEL_STATES } from "@/lib/funnel";
 import { requireOperator } from "@/lib/authz";
-import { applyTransitionFlag, markContractSent } from "@/lib/participants";
+import { applyTransitionFlag, markContractSent, markF2Complete } from "@/lib/participants";
 import { addParticipant, withdrawParticipant } from "@/app/dashboard/trips/[tripId]/actions";
 
 const PRE_CONTRACT_STATES: string[] = [FUNNEL_STATES.INTERESTED, FUNNEL_STATES.REGISTERED_F1];
+const F2_ELIGIBLE_STATES: string[] = [
+  FUNNEL_STATES.CONTRACT_SIGNED,
+  FUNNEL_STATES.DEPOSIT_CONFIRMED,
+  FUNNEL_STATES.CONFIRMED,
+];
 
 // Trip roster (FR-004/FR-005/FR-006): shows each participant's current
 // state, flags the ones with an overdue transition, and exposes the
@@ -112,6 +117,21 @@ export default async function TripRosterPage({
                       </form>
                     </>
                   )}
+
+                  {!participant.withdrawn &&
+                    F2_ELIGIBLE_STATES.includes(participant.currentState) &&
+                    !participant.f2Complete && (
+                      <form
+                        action={async () => {
+                          "use server";
+                          const operator = await requireOperator();
+                          await markF2Complete(participant.id, operator.email);
+                          revalidatePath(`/dashboard/trips/${tripId}`);
+                        }}
+                      >
+                        <button type="submit">Mark F2 complete</button>
+                      </form>
+                    )}
 
                   {!participant.withdrawn && (
                     <form action={withdrawParticipantForTrip.bind(null, participant.id)}>

@@ -45,7 +45,7 @@ src/
       page.tsx                       # trip list (FEAT-004)
       trips/new/page.tsx             # create-trip form
       trips/actions.ts               # "use server" createTrip
-      trips/[tripId]/page.tsx        # roster: state, overdue flag, transition controls
+      trips/[tripId]/page.tsx        # roster: state, overdue flag, transition + F2 controls (FEAT-002)
       trips/[tripId]/actions.ts      # "use server" addParticipant, withdrawParticipant
       trips/[tripId]/push/page.tsx   # daily push list: message, copy, nudge/snooze/dismiss (FEAT-005)
       trips/[tripId]/push/actions.ts # "use server" recordNudge, snoozeParticipant, dismissParticipantToday

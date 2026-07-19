@@ -6,6 +6,13 @@ import type { F1RegistrationInput } from "@/lib/f1Registration";
 
 const PRE_CONTRACT_STATES: string[] = [FUNNEL_STATES.INTERESTED, FUNNEL_STATES.REGISTERED_F1];
 
+// F2 applies only once the participant is at least Contract signed (FR-002).
+const F2_ELIGIBLE_STATES: string[] = [
+  FUNNEL_STATES.CONTRACT_SIGNED,
+  FUNNEL_STATES.DEPOSIT_CONFIRMED,
+  FUNNEL_STATES.CONFIRMED,
+];
+
 export type NewParticipantInput = {
   firstName: string;
   lastName: string;
@@ -114,6 +121,35 @@ export async function applyTransitionFlag(
       confirmed: isConfirmed(flags),
       currentState: deriveState(participant.currentState as FunnelState, flags),
       stateChangedAt: new Date(),
+      stateChangedBy: operatorEmail,
+    },
+  });
+}
+
+// FR-002: records only that F2 was completed (never the sensitive answers —
+// those stay in the external form, ADR-001). Sets currentState directly
+// rather than through deriveState, which only models the contract/deposit
+// flags and has no notion of F2 — a participant whose contractSigned or
+// depositConfirmed flag is toggled after F2 is marked complete will have
+// deriveState silently move them off "F2 complete" again; no acceptance
+// criterion covers that edge case, so it is an accepted v1 gap.
+export async function markF2Complete(
+  participantId: string,
+  operatorEmail: string,
+): Promise<Participant> {
+  const participant = await prisma.participant.findUniqueOrThrow({ where: { id: participantId } });
+  if (!F2_ELIGIBLE_STATES.includes(participant.currentState)) {
+    throw new Error(`Cannot mark F2 complete from state "${participant.currentState}"`);
+  }
+  const now = new Date();
+  return prisma.participant.update({
+    where: { id: participantId },
+    data: {
+      f2Complete: true,
+      f2CompletedAt: now,
+      f2VerifiedBy: operatorEmail,
+      currentState: FUNNEL_STATES.F2_COMPLETE,
+      stateChangedAt: now,
       stateChangedBy: operatorEmail,
     },
   });
