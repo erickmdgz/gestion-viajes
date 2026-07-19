@@ -25,6 +25,7 @@ const {
   snoozeParticipantRecord,
   dismissParticipantTodayRecord,
   registerParticipantViaF1,
+  markF2Complete,
 } = await import("@/lib/participants");
 const { createTripRecord } = await import("@/lib/trips");
 const { computeSnoozedUntil } = await import("@/lib/reminders");
@@ -256,5 +257,49 @@ describe("registerParticipantViaF1 (TC-001)", () => {
     expect(participant.consentTimestamp).not.toBeNull();
     expect(participant.stateChangedBy).toBeNull();
     expect(participant.studentId).toBe("A12345678");
+  });
+});
+
+describe("markF2Complete (TC-004, TC-005)", () => {
+  async function seedConfirmedParticipant() {
+    const trip = await seedTrip();
+    const participant = await addParticipantRecord(
+      trip.id,
+      { firstName: "Ana", lastName: "Ruiz", email: "ana@example.com", initialState: FUNNEL_STATES.REGISTERED_F1 },
+      OPERATOR,
+    );
+    await markContractSent(participant.id, OPERATOR);
+    await applyTransitionFlag(participant.id, "contractSigned", true, OPERATOR);
+    await applyTransitionFlag(participant.id, "depositConfirmed", true, OPERATOR);
+    return participant;
+  }
+
+  it("sets F2 status fields and current_state without touching sensitive data (TC-004)", async () => {
+    const participant = await seedConfirmedParticipant();
+
+    const updated = await markF2Complete(participant.id, OPERATOR);
+
+    expect(updated.f2Complete).toBe(true);
+    expect(updated.f2CompletedAt).not.toBeNull();
+    expect(updated.f2VerifiedBy).toBe(OPERATOR);
+    expect(updated.currentState).toBe(FUNNEL_STATES.F2_COMPLETE);
+
+    // TC-005: no F2 sensitive field is ever a key on the record, at all --
+    // structural guarantee, not just an empty value (ADR-001).
+    const sensitiveKeys = ["passportScan", "birthDate", "medicalCondition", "diet", "dietOther"];
+    for (const key of sensitiveKeys) {
+      expect(Object.keys(updated)).not.toContain(key);
+    }
+  });
+
+  it("rejects marking F2 complete before the participant has at least signed the contract", async () => {
+    const trip = await seedTrip();
+    const participant = await addParticipantRecord(
+      trip.id,
+      { firstName: "Ana", lastName: "Ruiz", email: "ana@example.com", initialState: FUNNEL_STATES.REGISTERED_F1 },
+      OPERATOR,
+    );
+
+    await expect(markF2Complete(participant.id, OPERATOR)).rejects.toThrow();
   });
 });
