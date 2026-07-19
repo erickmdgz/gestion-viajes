@@ -31,16 +31,35 @@ opens the view; a background scheduler is deferred to the deploy phase.
 
 ## Project structure
 
-Implemented in FEAT-003 (baseline):
+Implemented in FEAT-003 (baseline) and FEAT-004 (funnel core):
 
 ```txt
-prisma/          # schema.prisma (SQLite datasource) + seed.ts
+prisma/          # schema.prisma (Operator, Trip, Participant) + migrations/ + seed.ts
 src/
-  app/           # App Router: pages (/, /login, /dashboard) + api/auth/[...nextauth]
-  lib/           # prisma.ts (client singleton), auth.ts (Auth.js config)
+  app/
+    dashboard/
+      page.tsx                    # trip list (FEAT-004)
+      trips/new/page.tsx          # create-trip form
+      trips/actions.ts            # "use server" createTrip
+      trips/[tripId]/page.tsx     # roster: state, overdue flag, transition controls
+      trips/[tripId]/actions.ts   # "use server" addParticipant, withdrawParticipant
+    api/auth/[...nextauth]/       # Auth.js route handler
+    login/, page.tsx              # FEAT-003
+  lib/
+    prisma.ts     # client singleton
+    auth.ts       # Auth.js config
+    authz.ts      # requireOperator() — auth check reused by every action (FEAT-004)
+    funnel.ts      # pure state machine + overdue math (FR-005/FR-006)
+    trips.ts       # Trip reads/writes
+    participants.ts # Participant reads/writes, wraps funnel.ts
   middleware.ts  # route protection (redirects unauthenticated /dashboard* to /login)
 docs_en/         # living product documentation
 ```
+
+Mutations (create trip, add/withdraw participant, toggle a transition flag) go through **Next.js
+Server Actions**, not REST API routes — see `06_api.md`. Every action calls `requireOperator()` first
+(auth required on every action, not just the page shell). Database migrations use `prisma migrate dev`
+starting with FEAT-004 (`npm run db:migrate`); `db:push` remains available for quick local iteration.
 
 ## Main modules
 

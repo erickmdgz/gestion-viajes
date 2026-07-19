@@ -1,0 +1,106 @@
+import { prisma } from "@/lib/prisma";
+import type { Participant } from "@prisma/client";
+import { FUNNEL_STATES, type FunnelState, deriveState, isConfirmed } from "@/lib/funnel";
+
+const PRE_CONTRACT_STATES: string[] = [FUNNEL_STATES.INTERESTED, FUNNEL_STATES.REGISTERED_F1];
+
+export type NewParticipantInput = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  initialState: typeof FUNNEL_STATES.INTERESTED | typeof FUNNEL_STATES.REGISTERED_F1;
+};
+
+// Board-manual add path (FR-004). Participants may also enter via the F1
+// form (FR-001, a separate FEAT) — this is the board-side path only.
+export function addParticipantRecord(
+  tripId: string,
+  data: NewParticipantInput,
+  operatorEmail: string,
+): Promise<Participant> {
+  return prisma.participant.create({
+    data: {
+      tripId,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      currentState: data.initialState,
+      stateChangedAt: new Date(),
+      stateChangedBy: operatorEmail,
+    },
+  });
+}
+
+// Board action moving a participant out of the pre-contract states. This is
+// the only path into "Contract sent" — no participant deadline applies to
+// this transition (FR-003 AC2); the overdue clock only starts afterward.
+export async function markContractSent(
+  participantId: string,
+  operatorEmail: string,
+): Promise<Participant> {
+  const participant = await prisma.participant.findUniqueOrThrow({ where: { id: participantId } });
+  if (!PRE_CONTRACT_STATES.includes(participant.currentState)) {
+    throw new Error(`Cannot mark contract sent from state "${participant.currentState}"`);
+  }
+  return prisma.participant.update({
+    where: { id: participantId },
+    data: {
+      currentState: FUNNEL_STATES.CONTRACT_SENT,
+      stateChangedAt: new Date(),
+      stateChangedBy: operatorEmail,
+    },
+  });
+}
+
+// Sets or clears an independent transition flag (FR-005). Requires the
+// participant to have already reached "Contract sent" — the board never
+// sets Confirmed directly; it is always derived from the two flags.
+export async function applyTransitionFlag(
+  participantId: string,
+  flag: "contractSigned" | "depositConfirmed",
+  value: boolean,
+  operatorEmail: string,
+): Promise<Participant> {
+  const participant = await prisma.participant.findUniqueOrThrow({ where: { id: participantId } });
+  if (PRE_CONTRACT_STATES.includes(participant.currentState)) {
+    throw new Error("Cannot set a transition flag before the contract has been sent");
+  }
+
+  const flags = {
+    contractSigned: flag === "contractSigned" ? value : participant.contractSigned,
+    depositConfirmed: flag === "depositConfirmed" ? value : participant.depositConfirmed,
+    withdrawn: participant.withdrawn,
+  };
+
+  return prisma.participant.update({
+    where: { id: participantId },
+    data: {
+      contractSigned: flags.contractSigned,
+      depositConfirmed: flags.depositConfirmed,
+      confirmed: isConfirmed(flags),
+      currentState: deriveState(participant.currentState as FunnelState, flags),
+      stateChangedAt: new Date(),
+      stateChangedBy: operatorEmail,
+    },
+  });
+}
+
+// Terminal state (§6.4). Historical flags (contractSigned, depositConfirmed,
+// confirmed) are kept as-is, not cleared, so the record still reflects how
+// far the participant got before dropping. Dropping ≠ deleting (FR-024).
+export function withdrawParticipantRecord(
+  participantId: string,
+  operatorEmail: string,
+  dropReason: string | null,
+): Promise<Participant> {
+  return prisma.participant.update({
+    where: { id: participantId },
+    data: {
+      withdrawn: true,
+      currentState: FUNNEL_STATES.WITHDRAWN,
+      dropReason,
+      stateChangedAt: new Date(),
+      stateChangedBy: operatorEmail,
+    },
+  });
+}

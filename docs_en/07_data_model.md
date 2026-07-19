@@ -16,28 +16,39 @@ never log in (NF-2, NF-8).
 ## Entity: Trip
 
 A mission/trip whose participants move through the funnel. Holds the per-transition deadlines that
-drive overdue detection (FR-003, FR-006). Aligned with PRD §7.1.
+drive overdue detection (FR-003, FR-006). Aligned with PRD §7.1. Implemented in FEAT-004.
 
 | Field | Type | Required | Description |
 |---|---|---|---|
 | id | UUID | Yes | Unique identifier |
 | name | String | Yes | Trip / mission name |
-| registration_close | Date | No | Trip-level "registration close" date (deadline source) |
-| contract_date | Date | No | Trip-level contract deadline |
-| first_payment_date | Date | No | Trip-level first-payment deadline |
-| flights_date | Date | No | Trip-level flights/passport deadline |
-| grace_period_days | Integer | Yes | Days after a deadline before "overdue"; default 0 `[PROPOSED — confirm]` |
-| timezone | String | Yes | Board-local timezone `[PROPOSED — confirm]` |
+| registration_close | Date | No | Informational; borders the Registered (F1) → Contract sent transition, which is board-action only and carries no participant deadline (FR-003 AC2) |
+| contract_date | Date | No | Absolute deadline for the "Contract signed" transition; wins over `contract_signed_deadline_days` when set |
+| contract_signed_deadline_days | Integer | No | Relative fallback for "Contract signed": N days after the participant entered "Contract sent". Used only when `contract_date` is null |
+| first_payment_date | Date | No | Absolute deadline for the "Deposit confirmed" transition; wins over `deposit_confirmed_deadline_days` when set |
+| deposit_confirmed_deadline_days | Integer | No | Relative fallback for "Deposit confirmed": N days after the participant entered "Contract sent". Used only when `first_payment_date` is null |
+| flights_date | Date | No | Reserved for the future "Ready for flights" transition — not used by any FEAT-004 logic |
+| grace_period_days | Integer | Yes | Days after a deadline before "overdue"; default 0 |
+| timezone | String | Yes | Board-local timezone; **persisted but not yet consumed** — FEAT-004's overdue calculation uses plain UTC calendar-day arithmetic (accepted v1 simplification; a few hours of error near a midnight boundary is not significant at a 0-day default grace period) |
 
-Per-transition deadlines can be **absolute** (the trip-level dates above) or **relative** (N days
-after entering a state), per §7.1; some transitions are board-action only and carry no participant
-deadline (e.g. Registered (F1) → Contract sent).
+Per-transition deadlines are **absolute** (the trip-level date columns above) when set, else **relative**
+(N days after the participant entered "Contract sent", via the matching `*_deadline_days` column), per
+§7.1. This resolves the FR-003/§7.1 `[PROPOSED — confirm]` tags: **grace period defaults to 0 days**
+and **timezone is board-local but not yet timezone-aware in the overdue calculation** (both confirmed
+by FEAT-004). Registered (F1) → Contract sent is board-action only and carries no participant deadline.
 
 ## Entity: Participant
 
 A student moving through the Solanum funnel toward a confirmed trip seat. Fields marked **(F1)** are
 captured by the F1 form (FEAT-001); fields marked **(F2 status)** are set when the board records F2
 completion (FEAT-002). Aligned with PRD §16.
+
+**FEAT-004 implements only the funnel-management subset** below (identity: `first_name`, `last_name`,
+`email`; funnel: `current_state`, `contract_signed`, `deposit_confirmed`, `confirmed`, `withdrawn`,
+`drop_reason`, `state_changed_at`, `state_changed_by`) — enough to identify and contact a
+board-added participant (FR-004) without building the full F1 intake form, which is a separate,
+not-yet-built feature (FR-001). The remaining fields below (`student_id`, `age`, `career`, `phone`,
+etc.) are added by FEAT-001 as additional columns without breaking this schema.
 
 | Field | Type | Required | Source | Description |
 |---|---|---|---|---|
@@ -168,3 +179,15 @@ FR-018; PRD §10).
   (FR-020) a matching key is flagged as a duplicate (FR-025); re-import updates by key (FR-026).
 - **Delete ≠ drop:** deletion (FR-024) is for erroneous records only; genuine drops use `withdrawn`
   (§6.4). `trip_id` scopes all funnel/roster/tier queries (multi-trip) `[PROPOSED — confirm]`.
+- **Contract-sent gate (FEAT-004, FR-005):** `contract_signed`/`deposit_confirmed` can only be set once
+  the participant has reached "Contract sent" (via the board-only `markContractSent` action); setting
+  either flag on a pre-contract participant is rejected. The two flags are independent of each other.
+  A regression that clears both flags floors at "Contract sent" — it never falls back to a pre-contract
+  state once the contract has been sent.
+- **Withdrawing keeps historical flags:** `withdrawParticipantRecord` (FEAT-004) does not clear
+  `contract_signed`/`deposit_confirmed`/`confirmed` when withdrawing — they remain a historical
+  snapshot of how far the participant got. Every "active"/"confirmed count" query elsewhere must
+  filter `withdrawn = false` explicitly (relevant to the future FR-013, FR-019).
+- **No participant deduplication yet (FR-025, not in FEAT-004 scope):** `addParticipantRecord` does not
+  check for an existing participant with the same email/contact handle; duplicate detection is a
+  separate, not-yet-built feature.

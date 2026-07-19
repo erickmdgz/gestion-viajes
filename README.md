@@ -6,8 +6,10 @@ Solanum is a **local-first academic-trip funnel tracker** for a student exec boa
 It gives the board a single view of where each participant is in the funnel and who to nudge today —
 without processing money or storing sensitive data. See `docs_en/01_product_vision.md`.
 
-This repository currently contains the **project baseline** (FEAT-003): a running app with operator
-authentication. The funnel features are built on top of it (FEAT-004+).
+This repository currently contains the **project baseline** (FEAT-003) plus the **funnel core**
+(FEAT-004): operator authentication, and trips/participants moving through the funnel state machine
+with overdue flagging. Reminders, the daily push list, agency documents and price tiers are built on
+top of it in later features (FEAT-005+).
 
 ## Stack
 
@@ -28,7 +30,7 @@ authentication. The funnel features are built on top of it (FEAT-004+).
 ```bash
 npm install
 cp .env.example .env   # then fill in AUTH_SECRET and the seed credentials
-npm run db:push        # create the local SQLite database
+npm run db:migrate     # create the local SQLite database and apply migrations
 npm run db:seed        # create the initial exec-board operator
 ```
 
@@ -59,11 +61,12 @@ SEED_OPERATOR_NAME=      # initial operator display name
 
 ```txt
 prisma/
-  schema.prisma   # SQLite datasource + Operator model
+  schema.prisma   # SQLite datasource + Operator, Trip, Participant models
+  migrations/     # prisma migrate history
   seed.ts         # seeds the initial operator
 src/
-  app/            # App Router pages (/, /login, /dashboard) + api/auth/[...nextauth]
-  lib/            # prisma.ts (client), auth.ts (Auth.js config)
+  app/            # App Router pages (/, /login, /dashboard, /dashboard/trips/*) + api/auth/[...nextauth]
+  lib/            # prisma.ts, auth.ts, authz.ts, funnel.ts (state machine), trips.ts, participants.ts
   middleware.ts   # protects /dashboard* (redirects to /login without a session)
 docs_en/          # product documentation
 ```
@@ -76,7 +79,9 @@ docs_en/          # product documentation
 | npm run build | Builds the project |
 | npm run start | Runs the production build |
 | npm run lint | Lints the project |
-| npm run db:push | Syncs the Prisma schema to the local SQLite database |
+| npm run test | Runs the Vitest suite (`src/lib/**/*.test.ts`) |
+| npm run db:migrate | Applies Prisma migrations (creates the local SQLite database on first run) |
+| npm run db:push | Syncs the Prisma schema to the local SQLite database without a migration |
 | npm run db:seed | Seeds the initial exec-board operator |
 
 ## Documentation

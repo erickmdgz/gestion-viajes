@@ -20,3 +20,46 @@ model Operator {
   passwordHash String
   createdAt    DateTime @default(now())
 }
+
+// A mission/trip whose participants move through the funnel (FEAT-004).
+// Per-transition deadlines: an absolute trip-level date wins when set;
+// otherwise the matching *DeadlineDays column is a relative fallback
+// (N days after the participant entered the state), per FR-003.
+model Trip {
+  id                           String        @id @default(uuid())
+  name                         String
+  registrationClose            DateTime?
+  contractDate                 DateTime?
+  contractSignedDeadlineDays   Int?
+  firstPaymentDate             DateTime?
+  depositConfirmedDeadlineDays Int?
+  flightsDate                  DateTime?
+  gracePeriodDays              Int           @default(0)
+  timezone                     String        @default("America/Mexico_City")
+  createdAt                    DateTime      @default(now())
+  participants                 Participant[]
+}
+
+// A student moving through the funnel toward a confirmed trip seat
+// (FEAT-004; board-manual add/view path, FR-004/005/006). Only the
+// funnel-management field subset is implemented here — the full F1
+// field set (student_id, age, career, ...) is added later by FEAT-001.
+model Participant {
+  id               String   @id @default(uuid())
+  tripId           String
+  trip             Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  firstName        String
+  lastName         String
+  email            String
+  currentState     String   @default("Registered (F1)")
+  contractSigned   Boolean  @default(false)
+  depositConfirmed Boolean  @default(false)
+  confirmed        Boolean  @default(false)
+  withdrawn        Boolean  @default(false)
+  dropReason       String?
+  stateChangedAt   DateTime @default(now())
+  stateChangedBy   String?
+  createdAt        DateTime @default(now())
+
+  @@index([tripId])
+}
