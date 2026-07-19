@@ -31,35 +31,45 @@ opens the view; a background scheduler is deferred to the deploy phase.
 
 ## Project structure
 
-Implemented in FEAT-003 (baseline) and FEAT-004 (funnel core):
+Implemented in FEAT-003 (baseline), FEAT-004 (funnel core) and FEAT-005 (reminders):
 
 ```txt
 prisma/          # schema.prisma (Operator, Trip, Participant) + migrations/ + seed.ts
 src/
   app/
     dashboard/
-      page.tsx                    # trip list (FEAT-004)
-      trips/new/page.tsx          # create-trip form
-      trips/actions.ts            # "use server" createTrip
-      trips/[tripId]/page.tsx     # roster: state, overdue flag, transition controls
-      trips/[tripId]/actions.ts   # "use server" addParticipant, withdrawParticipant
+      page.tsx                       # trip list (FEAT-004)
+      trips/new/page.tsx             # create-trip form
+      trips/actions.ts               # "use server" createTrip
+      trips/[tripId]/page.tsx        # roster: state, overdue flag, transition controls
+      trips/[tripId]/actions.ts      # "use server" addParticipant, withdrawParticipant
+      trips/[tripId]/push/page.tsx   # daily push list: message, copy, nudge/snooze/dismiss (FEAT-005)
+      trips/[tripId]/push/actions.ts # "use server" recordNudge, snoozeParticipant, dismissParticipantToday
+      trips/[tripId]/push/copy-button.tsx # "use client" — clipboard only, no business logic
     api/auth/[...nextauth]/       # Auth.js route handler
     login/, page.tsx              # FEAT-003
   lib/
     prisma.ts     # client singleton
     auth.ts       # Auth.js config
     authz.ts      # requireOperator() — auth check reused by every action (FEAT-004)
-    funnel.ts      # pure state machine + overdue math (FR-005/FR-006)
+    funnel.ts       # pure state machine + overdue math (FR-005/FR-006)
+    reminders.ts     # pure push-list grouping/sorting + message templates (FR-007/008/009)
     trips.ts       # Trip reads/writes
-    participants.ts # Participant reads/writes, wraps funnel.ts
+    participants.ts # Participant reads/writes, wraps funnel.ts and reminders.ts
   middleware.ts  # route protection (redirects unauthenticated /dashboard* to /login)
 docs_en/         # living product documentation
 ```
 
-Mutations (create trip, add/withdraw participant, toggle a transition flag) go through **Next.js
-Server Actions**, not REST API routes — see `06_api.md`. Every action calls `requireOperator()` first
-(auth required on every action, not just the page shell). Database migrations use `prisma migrate dev`
-starting with FEAT-004 (`npm run db:migrate`); `db:push` remains available for quick local iteration.
+Mutations (create trip, add/withdraw participant, toggle a transition flag, record a nudge,
+snooze/dismiss) go through **Next.js Server Actions**, not REST API routes — see `06_api.md`. Every
+action calls `requireOperator()` first (auth required on every action, not just the page shell).
+Database migrations use `prisma migrate dev` starting with FEAT-004 (`npm run db:migrate`); `db:push`
+remains available for quick local iteration.
+
+`copy-button.tsx` (FEAT-005) is the app's **first Client Component beyond `/login`** — justified
+because clipboard access (`navigator.clipboard.writeText`) has no server-side equivalent. It receives
+the fully rendered message text as a prop; it contains no business logic, no fetch, and constructs no
+URL, keeping it consistent with "do not mix business logic with visual components."
 
 ## Main modules
 
