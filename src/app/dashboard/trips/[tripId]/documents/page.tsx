@@ -2,7 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTripById } from "@/lib/trips";
 import { listDocumentsForTrip } from "@/lib/agencyDocuments";
-import { addDocument, markCurrent } from "@/app/dashboard/trips/[tripId]/documents/actions";
+import { getItineraryNotice } from "@/lib/notices";
+import { addDocument, markCurrent, publishItinerary } from "@/app/dashboard/trips/[tripId]/documents/actions";
+import { CopyButton } from "@/app/dashboard/trips/[tripId]/push/copy-button";
 
 // Agency document layer (FR-010/011/012): register versions by type, mark
 // exactly one per type as current, and show each version's changelog.
@@ -20,9 +22,11 @@ export default async function TripDocumentsPage({
 
   const documents = await listDocumentsForTrip(tripId);
   const types = Array.from(new Set(documents.map((d) => d.type)));
+  const itineraryNotice = await getItineraryNotice(tripId);
 
   const addDocumentForTrip = addDocument.bind(null, tripId);
   const markCurrentForTrip = markCurrent.bind(null, tripId);
+  const publishItineraryForTrip = publishItinerary.bind(null, tripId);
 
   return (
     <main className="wide">
@@ -30,6 +34,25 @@ export default async function TripDocumentsPage({
       <p>
         <Link href={`/dashboard/trips/${tripId}`}>&larr; Back to roster</Link>
       </p>
+
+      <section className="card">
+        <h2>Itinerary sharing</h2>
+        {itineraryNotice?.publishedAt ? (
+          <>
+            <p>Published {itineraryNotice.publishedAt.toISOString().slice(0, 10)}.</p>
+            <p>Share this link with the confirmed group — it always serves the current itinerary:</p>
+            <pre>{itineraryNotice.contentRef}</pre>
+            <CopyButton text={itineraryNotice.contentRef} />
+          </>
+        ) : (
+          <>
+            <p>Not published yet. Register an itinerary document and mark it current first.</p>
+            <form action={publishItineraryForTrip}>
+              <button type="submit">Publish itinerary</button>
+            </form>
+          </>
+        )}
+      </section>
 
       {documents.length === 0 && <p>No documents registered yet.</p>}
 
