@@ -165,16 +165,25 @@ An agency price band by group size; drives the live tier resolution (FR-013; PRD
 ## Entity: Notice
 
 A piece of distributed content for the confirmed group (FR-014, FR-015; PRD §12.3).
-**`type = "itinerary"` implemented in FEAT-008** (FR-014); `notice`/`payment-reminder` (FR-015) are
-not yet built — the model already supports them, only their actions/UI are out of this FEAT's scope.
+**`type = "itinerary"` implemented in FEAT-008** (FR-014); **`notice`/`payment-reminder` implemented
+in FEAT-009** (FR-015).
 
 | Field | Type | Required | Description |
 |---|---|---|---|
 | id | UUID | Yes | Unique identifier |
 | trip_id | UUID | Yes | Trip the notice belongs to |
-| type | String | Yes | itinerary / notice / payment-reminder. Unique per (trip_id, type) |
-| content_ref | String | Yes | For `itinerary`: the **stable Solanum share path** (`/share/{trip_id}/itinerary`), not the underlying agency file link — see rule below |
+| type | String | Yes | itinerary / notice / payment-reminder |
+| content_ref | String | Yes | For `itinerary`: the **stable Solanum share path** (`/share/{trip_id}/itinerary`) — see rule below. For `notice`/`payment-reminder`: the shared feed path (`/share/{trip_id}/notices`), the same value across all of a trip's notice rows — a byproduct of reusing the field, not fresh complexity |
+| body | String | No | Free text for `notice`/`payment-reminder`, authored directly in Solanum (FEAT-009). Not used by `itinerary` |
 | published_at | DateTime | No | When it was published; `null` means never published (the share link shows "not available yet") |
+
+- **Itinerary is a single mutable "current" slot per (trip, type); notice/payment-reminder are an
+  accumulating feed (FEAT-009).** There is **no** `@@unique([trip_id, type])` constraint — it was
+  removed because it would incorrectly block the feed types from having more than one row per (trip,
+  type), which is exactly what a feed needs. Itinerary's singleton behavior (republish updates the
+  same row instead of creating a new one) is enforced in application code
+  (`publishItinerary`, `src/lib/notices.ts`: find the existing row for that type, or create one),
+  not the database.
 
 - **The itinerary share link is a live lookup, not a snapshot (FR-014, resolves TC-032).**
   `resolvePublishedItineraryFileRef` (`src/lib/notices.ts`) re-resolves the trip's *current*

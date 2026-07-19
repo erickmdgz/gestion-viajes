@@ -32,8 +32,8 @@ opens the view; a background scheduler is deferred to the deploy phase.
 ## Project structure
 
 Implemented in FEAT-003 (baseline), FEAT-004 (funnel core), FEAT-005 (reminders), FEAT-001 (F1
-public intake), FEAT-006 (agency document layer), FEAT-007 (live price tier) and FEAT-008 (publish
-itinerary):
+public intake), FEAT-006 (agency document layer), FEAT-007 (live price tier), FEAT-008 (publish
+itinerary) and FEAT-009 (publish notices):
 
 ```txt
 prisma/          # schema.prisma (Operator, Trip, Participant) + migrations/ + seed.ts
@@ -55,7 +55,10 @@ src/
       trips/[tripId]/documents/actions.ts # "use server" addDocument, markCurrent, publishItinerary
       trips/[tripId]/pricing/page.tsx     # live price tier by confirmed count (FEAT-007)
       trips/[tripId]/pricing/actions.ts   # "use server" addPriceTier
+      trips/[tripId]/notices/page.tsx     # compose + list published notices/payment-reminders (FEAT-009)
+      trips/[tripId]/notices/actions.ts   # "use server" publishNoticeAction
     share/[tripId]/itinerary/page.tsx     # public, no session — live-resolves the current itinerary (FEAT-008)
+    share/[tripId]/notices/page.tsx       # public, no session — lists published notices, most recent first (FEAT-009)
     api/auth/[...nextauth]/       # Auth.js route handler
     login/, page.tsx              # FEAT-003
   lib/
@@ -71,7 +74,8 @@ src/
                         # exactly one is_current per (trip, type) (FR-011)
     priceTiers.ts       # pure tier resolution + confirmed-count math (FR-013)
     notices.ts           # Notice reads/writes; resolvePublishedItineraryFileRef is the live lookup
-                          # the public share page resolves against on every visit (FR-014)
+                          # the public share page resolves against on every visit (FR-014).
+                          # publishNotice/listPublishedNotices implement the FR-015 feed (FEAT-009)
   middleware.ts  # route protection (redirects unauthenticated /dashboard* to /login)
 docs_en/         # living product documentation
 ```
@@ -80,8 +84,9 @@ Mutations (create trip, add/withdraw participant, toggle a transition flag, reco
 snooze/dismiss) go through **Next.js Server Actions**, not REST API routes — see `06_api.md`. Every
 **board-facing** action calls `requireOperator()` first (auth required on every action, not just the
 page shell). The deliberate exceptions are `registerParticipant` (FEAT-001, FR-001) and the read-only
-`/share/[tripId]/itinerary` page (FEAT-008, FR-014): both are public by design (participants never
-log in — NF-2/NF-8). `registerParticipant`'s only guards are input validation and
+`/share/[tripId]/itinerary` (FEAT-008, FR-014) and `/share/[tripId]/notices` (FEAT-009, FR-015) pages:
+all are public by design (participants never log in — NF-2/NF-8). `registerParticipant`'s only
+guards are input validation and
 the write itself. Database migrations use `prisma migrate dev` starting with FEAT-004
 (`npm run db:migrate`); `db:push` remains available for quick local iteration.
 

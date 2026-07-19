@@ -115,3 +115,17 @@ page**, not an API endpoint:
 
 Not under `/dashboard`; `src/middleware.ts` does not (and must not) protect it — same pattern as
 `/apply/[tripId]` (FEAT-001).
+
+## Publish notices and payment-date reminders (FEAT-009)
+
+Board-only Server Action, `requireOperator()` first:
+
+| Action | File | Purpose |
+|---|---|---|
+| `publishNoticeAction(tripId, formData)` | `src/app/dashboard/trips/[tripId]/notices/actions.ts` | FR-015: publishes a `notice` or `payment-reminder` post (free text). Unlike `publishItinerary`, this always creates a new row — a feed, not a slot |
+
+Public, unauthenticated page, same pattern as the itinerary share page:
+
+| Route | Method | Purpose |
+|---|---|---|
+| `/share/[tripId]/notices` | GET | FR-015: lists every published `notice`/`payment-reminder` for the trip, most recent first, via `listPublishedNotices` (`src/lib/notices.ts`) |

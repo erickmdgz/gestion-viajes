@@ -13,6 +13,7 @@
 | FEAT-006 | Feature | Agency document layer: register, mark current, changelog | High | In progress | FR-010/FR-011/FR-012 |
 | FEAT-007 | Feature | Live price tier by confirmed group size | High | In progress | FR-013 |
 | FEAT-008 | Feature | Publish the current itinerary as a shareable link | High | In progress | FR-014 |
+| FEAT-009 | Feature | Publish notices and payment-date reminders | Medium | In progress | FR-015 |
 
 ## Allowed types
 

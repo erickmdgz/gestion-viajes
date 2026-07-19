@@ -50,7 +50,7 @@ The system's main flows will be tested before closing each feature.
 | TC-030 | FEAT-007 | FR-013 | Confirmed count below the smallest tier | Tool shows "no tier / below minimum" (no guess) | Passed (automated: `priceTiers.test.ts`; manual: curl-verified at 9 confirmed against the running app) |
 | TC-031 | FEAT-008 | FR-014 | Board publishes the current itinerary | Shareable link/file produced for the confirmed group, pointing to the current version | Passed (automated: `src/lib/notices.test.ts`; manual: curl-verified `/share/{tripId}/itinerary` redirects to the current fileRef with no session) |
 | TC-032 | FEAT-008 | FR-014 | Current itinerary superseded by a new current version; shared link opened | Link serves the new current version | Passed (automated: `notices.test.ts`, tested directly by marking a new version current without republishing; manual: curl-verified the same URL now redirects to the new version) |
-| TC-033 | Distribution | FR-015 | Board publishes a notice / payment-date reminder | Available as shareable content | Pending |
+| TC-033 | FEAT-009 | FR-015 | Board publishes a notice / payment-date reminder | Available as shareable content | Passed (automated: `src/lib/notices.test.ts`; manual: curl-verified `/share/{tripId}/notices` lists published notices/payment-reminders with no session) |
 | TC-034 | Distribution | FR-016 | Board requests promotional content | Draft content ideas and image prompts generated | Pending |
 | TC-035 | Visits | FR-017 | Board advances a visit through contact → confirmation → scheduled | Status recorded at each stage | Pending |
 | TC-036 | Visits | FR-017 | Board sets a day and time on a confirmed visit | Scheduled day and time stored on the visit | Pending |
