@@ -106,6 +106,32 @@ td button {
   font-size: 0.8rem;
 }
 
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  font-family: inherit;
+  color: var(--fg);
+}
+
+.card form {
+  display: inline-block;
+  margin: 0.25rem 0.5rem 0.25rem 0;
+}
+
+.card form button {
+  width: auto;
+  margin-top: 0;
+}
+
+.card form input[type="number"] {
+  width: 4rem;
+  display: inline-block;
+}
+
 .badge-overdue {
   display: inline-block;
   color: var(--error);
