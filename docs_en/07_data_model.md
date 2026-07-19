@@ -200,18 +200,24 @@ in FEAT-009** (FR-015).
 ## Entity: Visit
 
 A company/institution visit target tracked through a pipeline; feeds the agency brief (FR-017,
-FR-018; PRD §10).
+FR-018; PRD §10). **The pipeline itself (`contact`/`confirmed`/`scheduled`) is implemented in
+FEAT-011.** FR-018 (generating the agency brief from confirmed/scheduled visits) is a separate,
+not-yet-built feature that reuses this same entity.
 
 | Field | Type | Required | Description |
 |---|---|---|---|
 | id | UUID | Yes | Unique identifier |
 | trip_id | UUID | Yes | Trip the visit belongs to |
 | target_name | String | Yes | Company or institution name |
-| target_type | String | No | company / institution |
-| status | String | Yes | Pipeline stage: contact / confirmed / scheduled |
-| scheduled_date | Date | No | Day of the visit (set on confirmation) |
-| scheduled_time | String | No | Time of the visit (set on confirmation) |
-| notes | String | No | Free-text notes |
+| target_type | String | No | Fixed 2-option choice: `company` / `institution` — FR-017's own description names an exhaustive pair, unlike `AgencyDocument.type`'s open-ended examples |
+| status | String | Yes | Pipeline stage: `contact` (initial) / `confirmed` / `scheduled` — three explicit stages, not derived |
+| scheduled_date | Date | No | Day of the visit; set together with `scheduled_time` when a `confirmed` visit is scheduled — that action is what advances `status` to `scheduled` |
+| scheduled_time | String | No | Time of the visit; see `scheduled_date` |
+| notes | String | No | Free-text notes, captured at registration time only (no separate later-edit action in v1, same treatment as `AgencyDocument.changelog`) |
+
+- **Gates mirror the existing pre-contract/F2-eligibility pattern:** `markVisitConfirmed`
+  (`src/lib/visits.ts`) only succeeds from `contact`; `scheduleVisit` only succeeds from `confirmed`.
+  No regression action (no un-confirm/un-schedule) — no acceptance criterion requires one.
 
 ## Rules
 

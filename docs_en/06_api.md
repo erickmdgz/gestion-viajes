@@ -129,3 +129,13 @@ Public, unauthenticated page, same pattern as the itinerary share page:
 | Route | Method | Purpose |
 |---|---|---|
 | `/share/[tripId]/notices` | GET | FR-015: lists every published `notice`/`payment-reminder` for the trip, most recent first, via `listPublishedNotices` (`src/lib/notices.ts`) |
+
+## Track visit targets (FEAT-011)
+
+Board-only Server Actions, `requireOperator()` first:
+
+| Action | File | Purpose |
+|---|---|---|
+| `addVisit(tripId, formData)` | `src/app/dashboard/trips/[tripId]/visits/actions.ts` | FR-017: registers a visit target at status `contact` |
+| `confirmVisit(tripId, visitId)` | same | FR-017: advances `contact` → `confirmed`; rejects from any other status |
+| `scheduleVisitAction(tripId, visitId, formData)` | same | FR-017: sets the day/time and advances `confirmed` → `scheduled`; rejects unless already `confirmed` |
