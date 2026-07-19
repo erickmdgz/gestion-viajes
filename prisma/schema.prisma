@@ -57,6 +57,9 @@ model Participant {
   confirmed        Boolean  @default(false)
   withdrawn        Boolean  @default(false)
   dropReason       String?
+  snoozedUntil     DateTime?
+  lastRemindedAt   DateTime?
+  reminderCount    Int      @default(0)
   stateChangedAt   DateTime @default(now())
   stateChangedBy   String?
   createdAt        DateTime @default(now())
