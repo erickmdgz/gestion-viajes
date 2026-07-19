@@ -103,3 +103,29 @@ Board-only, `requireOperator()` first.
 Tier resolution is not an endpoint — computed on demand by `src/lib/priceTiers.ts`
 (`resolvePriceTier`, `countConfirmedParticipants`) when the pricing page renders, same "computed on
 demand" principle as overdue flagging and the daily push list.
+
+## Publish the current itinerary (FEAT-008)
+
+`publishItinerary` (above) is the only mutation. The actual sharing is a **public, unauthenticated
+page**, not an API endpoint:
+
+| Route | Method | Purpose |
+|---|---|---|
+| `/share/[tripId]/itinerary` | GET | FR-014: redirects to whichever `AgencyDocument.fileRef` is currently current for type `itinerary`; re-resolved on every visit (not a snapshot — TC-032), so the link never needs to change when the current version does. Shows "not available yet" if nothing has been published. |
+
+Not under `/dashboard`; `src/middleware.ts` does not (and must not) protect it — same pattern as
+`/apply/[tripId]` (FEAT-001).
+
+## Publish notices and payment-date reminders (FEAT-009)
+
+Board-only Server Action, `requireOperator()` first:
+
+| Action | File | Purpose |
+|---|---|---|
+| `publishNoticeAction(tripId, formData)` | `src/app/dashboard/trips/[tripId]/notices/actions.ts` | FR-015: publishes a `notice` or `payment-reminder` post (free text). Unlike `publishItinerary`, this always creates a new row — a feed, not a slot |
+
+Public, unauthenticated page, same pattern as the itinerary share page:
+
+| Route | Method | Purpose |
+|---|---|---|
+| `/share/[tripId]/notices` | GET | FR-015: lists every published `notice`/`payment-reminder` for the trip, most recent first, via `listPublishedNotices` (`src/lib/notices.ts`) |
