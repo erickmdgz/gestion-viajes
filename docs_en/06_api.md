@@ -91,5 +91,14 @@ Also Server Actions, not REST. Board-only, `requireOperator()` first.
 `file_ref` is a link/URL only — there is no file upload endpoint; Solanum does not store the agency's
 actual documents (ADR-002, agency-as-receiver principle).
 
-<!-- Remaining business features (price tiers, …) will be documented here as
-     the corresponding FEATs are built. -->
+## Live price tier — Next.js Server Action (FEAT-007)
+
+Board-only, `requireOperator()` first.
+
+| Action | File | Purpose |
+|---|---|---|
+| `addPriceTier(tripId, formData)` | `src/app/dashboard/trips/[tripId]/pricing/actions.ts` | FR-013: registers a price band (min size, max size, price) |
+
+Tier resolution is not an endpoint — computed on demand by `src/lib/priceTiers.ts`
+(`resolvePriceTier`, `countConfirmedParticipants`) when the pricing page renders, same "computed on
+demand" principle as overdue flagging and the daily push list.

@@ -140,6 +140,7 @@ FR-011, FR-012; PRD §9). **Implemented in FEAT-006.**
 ## Entity: PriceTier
 
 An agency price band by group size; drives the live tier resolution (FR-013; PRD §9.1).
+**Implemented in FEAT-007.**
 
 | Field | Type | Required | Description |
 |---|---|---|---|
@@ -147,7 +148,19 @@ An agency price band by group size; drives the live tier resolution (FR-013; PRD
 | trip_id | UUID | Yes | Trip the tier belongs to |
 | min_size | Integer | Yes | Lower bound (inclusive) |
 | max_size | Integer | Yes | Upper bound (inclusive) |
-| price | Decimal | Yes | Per-head price for this band |
+| price | **Integer** (not Decimal) | Yes | Per-head price for this band, whole currency units — Solanum does not process money (product vision); this is display-only, so `decimal.js` precision is not needed |
+
+- **Confirmed count basis (resolves the FR-013 `[PROPOSED — confirm]` tag):** cumulative — participants
+  where `confirmed = true` (set once `contract_signed` AND `deposit_confirmed`, §6.3) and
+  `withdrawn = false`. `confirmed` already behaves cumulatively in this schema: advancing to `F2
+  complete` (FEAT-002) never clears it, so a participant who moved past `Confirmed` still counts.
+- **Accompanying-professor exclusion is a known v1 gap.** The business rule says the professor should
+  be excluded from the confirmed count, but that requires `is_accompanying_professor` (FR-022, not yet
+  built). `countConfirmedParticipants` (`src/lib/priceTiers.ts`) currently counts everyone confirmed.
+  Same treatment as FEAT-004's TC-015 — a real rule, deferred and documented, not silently dropped.
+- **No overlap/contiguity validation on tier creation.** Boundary inclusivity is `min ≤ count ≤ max`
+  (resolves that `[PROPOSED — confirm]` tag); the board is trusted to enter non-overlapping bands, the
+  same trust level `createTrip` already extends to deadline dates.
 
 ## Entity: Notice
 

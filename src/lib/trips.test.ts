@@ -17,9 +17,11 @@ execSync("npx prisma db push --skip-generate --accept-data-loss", {
 
 const prisma = new PrismaClient();
 
-const { createTripRecord, listTrips, getTripWithParticipants } = await import("@/lib/trips");
+const { createTripRecord, listTrips, getTripWithParticipants, createPriceTierRecord, listPriceTiersForTrip } =
+  await import("@/lib/trips");
 
 beforeEach(async () => {
+  await prisma.priceTier.deleteMany();
   await prisma.participant.deleteMany();
   await prisma.trip.deleteMany();
 });
@@ -91,5 +93,27 @@ describe("getTripWithParticipants", () => {
 
   it("returns null for a missing trip", async () => {
     expect(await getTripWithParticipants("does-not-exist")).toBeNull();
+  });
+});
+
+describe("createPriceTierRecord / listPriceTiersForTrip (FR-013)", () => {
+  it("persists tiers for a trip, ordered by minSize", async () => {
+    const trip = await createTripRecord({
+      name: "Trip with tiers",
+      registrationClose: null,
+      contractDate: null,
+      contractSignedDeadlineDays: null,
+      firstPaymentDate: null,
+      depositConfirmedDeadlineDays: null,
+      flightsDate: null,
+      gracePeriodDays: 0,
+      timezone: "America/Mexico_City",
+    });
+
+    await createPriceTierRecord(trip.id, { minSize: 20, maxSize: 29, price: 13000 });
+    await createPriceTierRecord(trip.id, { minSize: 10, maxSize: 19, price: 15000 });
+
+    const tiers = await listPriceTiersForTrip(trip.id);
+    expect(tiers.map((t) => t.minSize)).toEqual([10, 20]);
   });
 });

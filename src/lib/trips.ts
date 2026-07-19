@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import type { Participant, Trip } from "@prisma/client";
+import type { Participant, PriceTier, Trip } from "@prisma/client";
 
 export type NewTripInput = {
   name: string;
@@ -34,4 +34,15 @@ export function getTripWithParticipants(tripId: string): Promise<TripWithPartici
     where: { id: tripId },
     include: { participants: { orderBy: { createdAt: "asc" } } },
   });
+}
+
+// FR-013: price tiers are trip-scoped data, same rationale as getTripById above.
+export type NewPriceTierInput = { minSize: number; maxSize: number; price: number };
+
+export function createPriceTierRecord(tripId: string, data: NewPriceTierInput): Promise<PriceTier> {
+  return prisma.priceTier.create({ data: { tripId, ...data } });
+}
+
+export function listPriceTiersForTrip(tripId: string): Promise<PriceTier[]> {
+  return prisma.priceTier.findMany({ where: { tripId }, orderBy: { minSize: "asc" } });
 }
