@@ -87,9 +87,22 @@ Also Server Actions, not REST. Board-only, `requireOperator()` first.
 |---|---|---|
 | `addDocument(tripId, formData)` | `src/app/dashboard/trips/[tripId]/documents/actions.ts` | FR-010: registers a document version (type, version label, date, optional link, optional changelog) |
 | `markCurrent(tripId, documentId)` | same | FR-011: marks one version current; atomically unsets any other current version of the same (trip, type) |
+| `publishItinerary(tripId)` | same | FR-014: gated on a current itinerary document existing; idempotent |
 
 `file_ref` is a link/URL only — there is no file upload endpoint; Solanum does not store the agency's
 actual documents (ADR-002, agency-as-receiver principle).
+
+## Publish the current itinerary (FEAT-008)
+
+`publishItinerary` (above) is the only mutation. The actual sharing is a **public, unauthenticated
+page**, not an API endpoint:
+
+| Route | Method | Purpose |
+|---|---|---|
+| `/share/[tripId]/itinerary` | GET | FR-014: redirects to whichever `AgencyDocument.fileRef` is currently current for type `itinerary`; re-resolved on every visit (not a snapshot — TC-032), so the link never needs to change when the current version does. Shows "not available yet" if nothing has been published. |
+
+Not under `/dashboard`; `src/middleware.ts` does not (and must not) protect it — same pattern as
+`/apply/[tripId]` (FEAT-001).
 
 <!-- Remaining business features (price tiers, …) will be documented here as
      the corresponding FEATs are built. -->

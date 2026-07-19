@@ -11,6 +11,7 @@
 | FEAT-004 | Feature | Funnel core: Trip + Participant state machine | High | In progress | FR-003/FR-004/FR-005/FR-006 |
 | FEAT-005 | Feature | Reminders: message templates, daily push list, snooze/dismiss | High | In progress | FR-007/FR-008/FR-009 |
 | FEAT-006 | Feature | Agency document layer: register, mark current, changelog | High | In progress | FR-010/FR-011/FR-012 |
+| FEAT-008 | Feature | Publish the current itinerary as a shareable link | High | In progress | FR-014 |
 
 ## Allowed types
 

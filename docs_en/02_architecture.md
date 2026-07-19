@@ -32,7 +32,7 @@ opens the view; a background scheduler is deferred to the deploy phase.
 ## Project structure
 
 Implemented in FEAT-003 (baseline), FEAT-004 (funnel core), FEAT-005 (reminders), FEAT-001 (F1
-public intake) and FEAT-006 (agency document layer):
+public intake), FEAT-006 (agency document layer) and FEAT-008 (publish itinerary):
 
 ```txt
 prisma/          # schema.prisma (Operator, Trip, Participant) + migrations/ + seed.ts
@@ -51,7 +51,8 @@ src/
       trips/[tripId]/push/actions.ts # "use server" recordNudge, snoozeParticipant, dismissParticipantToday
       trips/[tripId]/push/copy-button.tsx # "use client" — clipboard only, no business logic
       trips/[tripId]/documents/page.tsx   # agency document versions by type, mark current (FEAT-006)
-      trips/[tripId]/documents/actions.ts # "use server" addDocument, markCurrent
+      trips/[tripId]/documents/actions.ts # "use server" addDocument, markCurrent, publishItinerary
+    share/[tripId]/itinerary/page.tsx     # public, no session — live-resolves the current itinerary (FEAT-008)
     api/auth/[...nextauth]/       # Auth.js route handler
     login/, page.tsx              # FEAT-003
   lib/
@@ -65,6 +66,8 @@ src/
     participants.ts # Participant reads/writes, wraps funnel.ts, reminders.ts and f1Registration.ts
     agencyDocuments.ts # AgencyDocument reads/writes; markDocumentCurrent's $transaction enforces
                         # exactly one is_current per (trip, type) (FR-011)
+    notices.ts          # Notice reads/writes; resolvePublishedItineraryFileRef is the live lookup
+                         # the public share page resolves against on every visit (FR-014)
   middleware.ts  # route protection (redirects unauthenticated /dashboard* to /login)
 docs_en/         # living product documentation
 ```
@@ -72,8 +75,9 @@ docs_en/         # living product documentation
 Mutations (create trip, add/withdraw participant, toggle a transition flag, record a nudge,
 snooze/dismiss) go through **Next.js Server Actions**, not REST API routes — see `06_api.md`. Every
 **board-facing** action calls `requireOperator()` first (auth required on every action, not just the
-page shell). The one deliberate exception is `registerParticipant` (FEAT-001, FR-001): the F1 form is
-public by design (participants never log in — NF-2/NF-8), so its only guards are input validation and
+page shell). The deliberate exceptions are `registerParticipant` (FEAT-001, FR-001) and the read-only
+`/share/[tripId]/itinerary` page (FEAT-008, FR-014): both are public by design (participants never
+log in — NF-2/NF-8). `registerParticipant`'s only guards are input validation and
 the write itself. Database migrations use `prisma migrate dev` starting with FEAT-004
 (`npm run db:migrate`); `db:push` remains available for quick local iteration.
 
