@@ -122,18 +122,25 @@ model PriceTier {
 }
 
 // A piece of distributed content for the confirmed group (FR-014/015).
-// Only type = "itinerary" is wired up in FEAT-008; FR-015's generic
-// notice/payment-reminder publishing is a separate, not-yet-built feature.
-// contentRef stores the stable Solanum share path (e.g.
-// /share/{tripId}/itinerary), not the underlying agency file link — that
-// indirection is what lets the link survive a version change (FR-014 TC-032).
+// contentRef stores the stable Solanum share path, not external content —
+// for "itinerary" that indirection is what lets the link survive a version
+// change without republishing (TC-032); for "notice"/"payment-reminder"
+// (FEAT-009) it's the shared feed URL, same value across all of a trip's
+// notice rows. `body` (FEAT-009) holds the free text for notice/
+// payment-reminder posts; itinerary doesn't use it.
+//
+// No @@unique([tripId, type]) — itinerary is a single mutable "current"
+// slot per type (enforced in application code, see publishItinerary), but
+// notice/payment-reminder are an accumulating feed: each publish is its
+// own permanent row, so multiple rows of the same type are expected.
 model Notice {
   id          String    @id @default(uuid())
   tripId      String
   trip        Trip      @relation(fields: [tripId], references: [id], onDelete: Cascade)
   type        String
   contentRef  String
+  body        String?
   publishedAt DateTime?
 
-  @@unique([tripId, type])
+  @@index([tripId, type])
 }
