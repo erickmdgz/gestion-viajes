@@ -32,7 +32,7 @@ opens the view; a background scheduler is deferred to the deploy phase.
 ## Project structure
 
 Implemented in FEAT-003 (baseline), FEAT-004 (funnel core), FEAT-005 (reminders), FEAT-001 (F1
-public intake) and FEAT-006 (agency document layer):
+public intake), FEAT-006 (agency document layer) and FEAT-007 (live price tier):
 
 ```txt
 prisma/          # schema.prisma (Operator, Trip, Participant) + migrations/ + seed.ts
@@ -52,6 +52,8 @@ src/
       trips/[tripId]/push/copy-button.tsx # "use client" — clipboard only, no business logic
       trips/[tripId]/documents/page.tsx   # agency document versions by type, mark current (FEAT-006)
       trips/[tripId]/documents/actions.ts # "use server" addDocument, markCurrent
+      trips/[tripId]/pricing/page.tsx     # live price tier by confirmed count (FEAT-007)
+      trips/[tripId]/pricing/actions.ts   # "use server" addPriceTier
     api/auth/[...nextauth]/       # Auth.js route handler
     login/, page.tsx              # FEAT-003
   lib/
@@ -65,6 +67,7 @@ src/
     participants.ts # Participant reads/writes, wraps funnel.ts, reminders.ts and f1Registration.ts
     agencyDocuments.ts # AgencyDocument reads/writes; markDocumentCurrent's $transaction enforces
                         # exactly one is_current per (trip, type) (FR-011)
+    priceTiers.ts       # pure tier resolution + confirmed-count math (FR-013)
   middleware.ts  # route protection (redirects unauthenticated /dashboard* to /login)
 docs_en/         # living product documentation
 ```
