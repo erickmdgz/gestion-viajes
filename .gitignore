@@ -42,6 +42,15 @@ temp/
 
 # === Node.js (si aplica) ===
 node_modules/
+next-env.d.ts
+/.next/
+*.tsbuildinfo
+
+# === Base de datos local (SQLite, ADR-002) ===
+*.db
+*.db-journal
+prisma/*.db
+prisma/*.db-journal
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

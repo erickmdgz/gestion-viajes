@@ -1,5 +1,18 @@
 # Data model
 
+## Entity: Operator
+
+An exec-board member who logs in to operate Solanum (FEAT-003). Operators authenticate; participants
+never log in (NF-2, NF-8).
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| id | UUID | Yes | Unique identifier |
+| email | String | Yes | Unique login email |
+| name | String | Yes | Display name |
+| passwordHash | String | Yes | bcrypt hash; plaintext is never stored (NFR-001) |
+| createdAt | DateTime | Yes | Record creation date |
+
 ## Entity: Trip
 
 A mission/trip whose participants move through the funnel. Holds the per-transition deadlines that

@@ -1,0 +1,22 @@
+// Prisma schema — Solanum (local-first, SQLite).
+// The schema is kept Postgres-compatible (no SQLite-only features) so the
+// database can be migrated to a hosted Postgres at deploy time (ADR-002).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Exec-board member who logs in to operate Solanum (NF-8).
+// Participants never log in (NF-2); they are a separate entity added in later features.
+model Operator {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
