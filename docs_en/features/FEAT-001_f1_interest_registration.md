@@ -49,6 +49,17 @@ external processes (see FEAT-002 and ADR-001).
 
 ## 8. Proposed technical design
 
+> **Implementation note (as built):** this is a **native Solanum page** at `/apply/[tripId]`
+> (public, no session), not a Google Form — the "(e.g. Google Forms in v1)" framing below predates
+> the decision to build it natively. FR-001 requires the system to create the participant record
+> synchronously on submit, which only a Solanum-hosted form satisfies without a separate
+> import/sync step (that would be FR-020, a different, not-yet-built feature). The "program
+> information" block (destination, price, seats, etc.) described below is **not rendered**: `Trip`
+> has no such fields and no acceptance criterion requires it — the live page shows only `trip.name`
+> and the form. `full_name` is not a stored column; it is concatenated from `first_name`/`last_name`
+> wherever displayed, per this doc's own note below. See `docs_en/07_data_model.md` and
+> `docs_en/06_api.md` for the resulting schema/action list.
+
 > **Language note:** field/question **metadata** below (type, required, validation) is documentation
 > and is written in English. The **user-facing strings** a participant reads — question labels, intro
 > text, privacy notice, checkbox text — are kept **in Spanish (ES)** because the pilot population is
@@ -164,7 +175,7 @@ information. These belong to F2 or to later external processes.
 - [x] Update data model (`07_data_model.md`).
 - [x] Update test plan (`08_test_plan.md`).
 - [x] Feature doc (this file).
-- [ ] API spec — not applicable (no endpoints in v1 yet).
+- [x] Update API doc (`06_api.md` — `registerParticipant` Server Action).
 - [ ] Release notes — on release to `main`.
 
 ## 11. Checklist before implementing
@@ -178,9 +189,9 @@ information. These belong to F2 or to later external processes.
 
 ## 12. Checklist before closing
 
-- [ ] Implemented.
-- [ ] Tests executed.
-- [ ] Acceptance criteria met.
+- [x] Implemented.
+- [x] Tests executed (`npm run test` — 54/54 passing; manual end-to-end pass against the running app).
+- [x] Acceptance criteria met (TC-001..TC-003).
 - [ ] Pull request reviewed.
-- [ ] Documentation updated.
+- [x] Documentation updated.
 - [ ] Release notes updated.

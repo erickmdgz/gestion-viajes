@@ -40,29 +40,44 @@ model Trip {
   participants                 Participant[]
 }
 
-// A student moving through the funnel toward a confirmed trip seat
-// (FEAT-004; board-manual add/view path, FR-004/005/006). Only the
-// funnel-management field subset is implemented here — the full F1
-// field set (student_id, age, career, ...) is added later by FEAT-001.
+// A student moving through the funnel toward a confirmed trip seat.
+// Funnel-management fields from FEAT-004 (board-manual add/view path,
+// FR-004/005/006); F1 intake fields from FEAT-001 (public self-registration,
+// FR-001). full_name is intentionally not a column — it is derived from
+// firstName + lastName wherever displayed (sanctioned by the FEAT-001 doc's
+// own note that the field "may be dropped if concatenated").
 model Participant {
-  id               String   @id @default(uuid())
-  tripId           String
-  trip             Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
-  firstName        String
-  lastName         String
-  email            String
-  currentState     String   @default("Registered (F1)")
-  contractSigned   Boolean  @default(false)
-  depositConfirmed Boolean  @default(false)
-  confirmed        Boolean  @default(false)
-  withdrawn        Boolean  @default(false)
-  dropReason       String?
-  snoozedUntil     DateTime?
-  lastRemindedAt   DateTime?
-  reminderCount    Int      @default(0)
-  stateChangedAt   DateTime @default(now())
-  stateChangedBy   String?
-  createdAt        DateTime @default(now())
+  id                   String    @id @default(uuid())
+  tripId               String
+  trip                 Trip      @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  firstName            String
+  lastName             String
+  email                String
+  preferredName        String?
+  studentId            String?
+  age                  Int?
+  career               String?
+  semester             String?
+  phone                String?
+  instagram            String?
+  nationality          String?
+  passportStatus       String?
+  visaStatus           String?
+  whatsappGroupConsent Boolean?
+  privacyConsent       Boolean?
+  consentTimestamp     DateTime?
+  currentState         String    @default("Registered (F1)")
+  contractSigned       Boolean   @default(false)
+  depositConfirmed     Boolean   @default(false)
+  confirmed            Boolean   @default(false)
+  withdrawn            Boolean   @default(false)
+  dropReason           String?
+  snoozedUntil         DateTime?
+  lastRemindedAt       DateTime?
+  reminderCount        Int       @default(0)
+  stateChangedAt       DateTime  @default(now())
+  stateChangedBy       String?
+  createdAt            DateTime  @default(now())
 
   @@index([tripId])
 }

@@ -24,6 +24,7 @@ const {
   recordNudgeRecord,
   snoozeParticipantRecord,
   dismissParticipantTodayRecord,
+  registerParticipantViaF1,
 } = await import("@/lib/participants");
 const { createTripRecord } = await import("@/lib/trips");
 const { computeSnoozedUntil } = await import("@/lib/reminders");
@@ -225,5 +226,35 @@ describe("dismissParticipantTodayRecord (TC-022)", () => {
 
     const dismissed = await dismissParticipantTodayRecord(participant.id);
     expect(dismissed.snoozedUntil).toEqual(computeSnoozedUntil(1));
+  });
+});
+
+describe("registerParticipantViaF1 (TC-001)", () => {
+  it("creates the participant at Registered (F1) with consent flags and no operator", async () => {
+    const trip = await seedTrip();
+
+    const participant = await registerParticipantViaF1(trip.id, {
+      email: "ana@example.com",
+      firstName: "Ana",
+      lastName: "Ruiz",
+      preferredName: undefined,
+      studentId: "A12345678",
+      age: 20,
+      career: "Ingeniería",
+      semester: "4º",
+      phone: "5512345678",
+      instagram: undefined,
+      nationality: "Mexicana",
+      passportStatus: "Sí",
+      visaStatus: "No aplica",
+      whatsappGroupConsent: true,
+      privacyConsent: true,
+    });
+
+    expect(participant.currentState).toBe(FUNNEL_STATES.REGISTERED_F1);
+    expect(participant.privacyConsent).toBe(true);
+    expect(participant.consentTimestamp).not.toBeNull();
+    expect(participant.stateChangedBy).toBeNull();
+    expect(participant.studentId).toBe("A12345678");
   });
 });

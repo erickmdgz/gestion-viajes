@@ -46,10 +46,25 @@ completion (FEAT-002). Aligned with PRD §16.
 **FEAT-004 implements the funnel-management subset** (identity: `first_name`, `last_name`,
 `email`; funnel: `current_state`, `contract_signed`, `deposit_confirmed`, `confirmed`, `withdrawn`,
 `drop_reason`, `state_changed_at`, `state_changed_by`) — enough to identify and contact a
-board-added participant (FR-004) without building the full F1 intake form, which is a separate,
-not-yet-built feature (FR-001). **FEAT-005 adds the reminder subset** (`snoozed_until`,
-`last_reminded_at`, `reminder_count`). The remaining fields below (`student_id`, `age`, `career`,
-`phone`, etc.) are added by FEAT-001 as additional columns without breaking this schema.
+board-added participant (FR-004). **FEAT-005 adds the reminder subset** (`snoozed_until`,
+`last_reminded_at`, `reminder_count`). **FEAT-001 adds the F1 intake subset** (`preferred_name`,
+`student_id`, `age`, `career`, `semester`, `phone`, `instagram`, `nationality`, `passport_status`,
+`visa_status`, `whatsapp_group_consent`, `privacy_consent`, `consent_timestamp`) via a public,
+unauthenticated page at `/apply/[tripId]` (no board session — participants never log in, NF-2/NF-8).
+
+Two notes on how FEAT-001 differs from this table's "Required: Yes/No" column:
+
+- **`full_name` is not a column.** The FEAT-001 feature doc's own note says it "may be dropped if the
+  system concatenates first/last name" — it is, everywhere the roster/push list displays a name.
+- **All F1 fields are nullable at the schema level**, even ones marked "Required: Yes" below, because
+  `Participant` is shared with the board-manual add path (FR-004), which never collects them.
+  "Required" here means required *by the F1 form's own validation* (`src/lib/f1Registration.ts`), not
+  a database-level NOT NULL constraint.
+
+The "program information" block described in the FEAT-001 doc (destination, price, seats, payment
+schedule, etc.) is **not rendered on the live page** — `Trip` has no such fields and no FR-001
+acceptance criterion requires it; the public page only shows `trip.name` plus the form itself. A
+deliberate v1 scope trim, not a bug.
 
 | Field | Type | Required | Source | Description |
 |---|---|---|---|---|
@@ -58,7 +73,6 @@ not-yet-built feature (FR-001). **FEAT-005 adds the reminder subset** (`snoozed_
 | email | String | Yes | F1 | Contact email (valid email) |
 | first_name | String | Yes | F1 | First name(s) |
 | last_name | String | Yes | F1 | Last name(s) |
-| full_name | String | Yes | F1 | Full name (may be derived from first/last) |
 | preferred_name | String | No | F1 | Preferred form of address |
 | student_id | String | Yes | F1 | Enrollment id, pattern `A########` |
 | age | Integer | Yes | F1 | Age, must be ≥ 18 |
