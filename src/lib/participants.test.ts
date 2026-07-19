@@ -16,9 +16,17 @@ execSync("npx prisma db push --skip-generate --accept-data-loss", {
 
 const prisma = new PrismaClient();
 
-const { addParticipantRecord, markContractSent, applyTransitionFlag, withdrawParticipantRecord } =
-  await import("@/lib/participants");
+const {
+  addParticipantRecord,
+  markContractSent,
+  applyTransitionFlag,
+  withdrawParticipantRecord,
+  recordNudgeRecord,
+  snoozeParticipantRecord,
+  dismissParticipantTodayRecord,
+} = await import("@/lib/participants");
 const { createTripRecord } = await import("@/lib/trips");
+const { computeSnoozedUntil } = await import("@/lib/reminders");
 
 const OPERATOR = "board@solanum.local";
 
@@ -165,5 +173,57 @@ describe("withdrawParticipantRecord", () => {
 
     const stillExists = await prisma.participant.findUnique({ where: { id: participant.id } });
     expect(stillExists).not.toBeNull();
+  });
+});
+
+// These persistence tests prove the right value round-trips through
+// Prisma; the day-arithmetic semantics (TC-021/TC-022's actual "N days
+// hides them" / "reappears tomorrow" behavior) are proven with a fully
+// controlled `now` in src/lib/reminders.test.ts instead, since these
+// *Record functions use real wall-clock `new Date()` (same as
+// markContractSent/applyTransitionFlag).
+describe("recordNudgeRecord (TC-020)", () => {
+  it("sets last_reminded_at to today and increments the counter", async () => {
+    const trip = await seedTrip();
+    const participant = await addParticipantRecord(
+      trip.id,
+      { firstName: "Ana", lastName: "Ruiz", email: "ana@example.com", initialState: FUNNEL_STATES.REGISTERED_F1 },
+      OPERATOR,
+    );
+
+    const firstNudge = await recordNudgeRecord(participant.id);
+    expect(firstNudge.reminderCount).toBe(1);
+    expect(firstNudge.lastRemindedAt).not.toBeNull();
+
+    const secondNudge = await recordNudgeRecord(participant.id);
+    expect(secondNudge.reminderCount).toBe(2);
+  });
+});
+
+describe("snoozeParticipantRecord (TC-021)", () => {
+  it("persists a future snoozedUntil date", async () => {
+    const trip = await seedTrip();
+    const participant = await addParticipantRecord(
+      trip.id,
+      { firstName: "Ana", lastName: "Ruiz", email: "ana@example.com", initialState: FUNNEL_STATES.REGISTERED_F1 },
+      OPERATOR,
+    );
+
+    const snoozed = await snoozeParticipantRecord(participant.id, 3);
+    expect(snoozed.snoozedUntil).toEqual(computeSnoozedUntil(3));
+  });
+});
+
+describe("dismissParticipantTodayRecord (TC-022)", () => {
+  it("snoozes until the start of the next UTC day", async () => {
+    const trip = await seedTrip();
+    const participant = await addParticipantRecord(
+      trip.id,
+      { firstName: "Ana", lastName: "Ruiz", email: "ana@example.com", initialState: FUNNEL_STATES.REGISTERED_F1 },
+      OPERATOR,
+    );
+
+    const dismissed = await dismissParticipantTodayRecord(participant.id);
+    expect(dismissed.snoozedUntil).toEqual(computeSnoozedUntil(1));
   });
 });

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type { Participant } from "@prisma/client";
 import { FUNNEL_STATES, type FunnelState, deriveState, isConfirmed } from "@/lib/funnel";
+import { computeSnoozedUntil } from "@/lib/reminders";
 
 const PRE_CONTRACT_STATES: string[] = [FUNNEL_STATES.INTERESTED, FUNNEL_STATES.REGISTERED_F1];
 
@@ -103,4 +104,27 @@ export function withdrawParticipantRecord(
       stateChangedBy: operatorEmail,
     },
   });
+}
+
+// FR-009: records the nudge (timestamp + counter) without touching the
+// funnel state — no `stateChangedBy`-equivalent here, since none of
+// FR-009's acceptance criteria require recording who nudged/snoozed.
+export function recordNudgeRecord(participantId: string): Promise<Participant> {
+  return prisma.participant.update({
+    where: { id: participantId },
+    data: { lastRemindedAt: new Date(), reminderCount: { increment: 1 } },
+  });
+}
+
+export function snoozeParticipantRecord(participantId: string, days: number): Promise<Participant> {
+  return prisma.participant.update({
+    where: { id: participantId },
+    data: { snoozedUntil: computeSnoozedUntil(days) },
+  });
+}
+
+// Dismiss = snooze for 1 day (start of the next UTC calendar day) — same
+// `snoozedUntil` field, no separate "dismissed today" flag (FR-009).
+export function dismissParticipantTodayRecord(participantId: string): Promise<Participant> {
+  return snoozeParticipantRecord(participantId, 1);
 }

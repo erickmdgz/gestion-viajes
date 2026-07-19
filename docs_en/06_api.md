@@ -50,5 +50,20 @@ Overdue flagging (FR-006) is not an endpoint — it is computed on demand (`src/
 `isParticipantOverdue`) when the roster page renders, per `02_architecture.md`'s "computed on
 demand" principle.
 
-<!-- Remaining business features (reminders, agency docs, price tiers, …) will be documented here as
+## Reminders — Next.js Server Actions (FEAT-005)
+
+Also Server Actions, not REST. Every action calls `requireOperator()` first.
+
+| Action | File | Purpose |
+|---|---|---|
+| `recordNudge(tripId, participantId)` | `src/app/dashboard/trips/[tripId]/push/actions.ts` | FR-009: sets `lastRemindedAt`, increments `reminderCount` |
+| `snoozeParticipant(tripId, participantId, formData)` | same | FR-009: sets `snoozedUntil` N days out |
+| `dismissParticipantToday(tripId, participantId)` | same | FR-009: snoozes until the start of the next UTC day (dismiss = snooze 1 day, same field) |
+
+The daily push list (FR-008) and the reminder message (FR-007) are not endpoints either — computed
+on demand by `src/lib/reminders.ts` (`buildPushList`, `renderReminderMessage`) when the push page
+renders. Copy-to-clipboard (FR-007 AC2) happens entirely client-side in `copy-button.tsx`; no server
+round-trip, no PII in a URL.
+
+<!-- Remaining business features (agency docs, price tiers, …) will be documented here as
      the corresponding FEATs are built. -->

@@ -43,12 +43,13 @@ A student moving through the Solanum funnel toward a confirmed trip seat. Fields
 captured by the F1 form (FEAT-001); fields marked **(F2 status)** are set when the board records F2
 completion (FEAT-002). Aligned with PRD §16.
 
-**FEAT-004 implements only the funnel-management subset** below (identity: `first_name`, `last_name`,
+**FEAT-004 implements the funnel-management subset** (identity: `first_name`, `last_name`,
 `email`; funnel: `current_state`, `contract_signed`, `deposit_confirmed`, `confirmed`, `withdrawn`,
 `drop_reason`, `state_changed_at`, `state_changed_by`) — enough to identify and contact a
 board-added participant (FR-004) without building the full F1 intake form, which is a separate,
-not-yet-built feature (FR-001). The remaining fields below (`student_id`, `age`, `career`, `phone`,
-etc.) are added by FEAT-001 as additional columns without breaking this schema.
+not-yet-built feature (FR-001). **FEAT-005 adds the reminder subset** (`snoozed_until`,
+`last_reminded_at`, `reminder_count`). The remaining fields below (`student_id`, `age`, `career`,
+`phone`, etc.) are added by FEAT-001 as additional columns without breaking this schema.
 
 | Field | Type | Required | Source | Description |
 |---|---|---|---|---|
@@ -82,8 +83,8 @@ etc.) are added by FEAT-001 as additional columns without breaking this schema.
 | confirmed | Boolean | No | Derived | Auto-derived: `contract_signed` AND `deposit_confirmed` (§6.3, FR-005) |
 | withdrawn | Boolean | No | Funnel | Terminal Withdrawn/Declined flag (§6.4) |
 | drop_reason | String | No | Funnel | Optional free-text drop reason (§6.4) |
-| snoozed_until | DateTime | No | Reminders | Snoozed until this date; hidden from the daily push list (FR-009) |
-| last_reminded_at | DateTime | No | Reminders | When the participant was last nudged (FR-009) |
+| snoozed_until | DateTime | No | Reminders | Snoozed until this date; hidden from the daily push list (FR-009). Dismissing today's nudge sets this to the start of the next UTC day — the same field, no separate "dismissed" flag |
+| last_reminded_at | DateTime | No | Reminders | When the participant was last nudged (FR-009); set only by an explicit "Mark as nudged" action, not by copying the message |
 | reminder_count | Integer | No | Reminders | Per-participant nudge counter for metrics (FR-009, §18) |
 | state_changed_at | DateTime | No | System | Timestamp of the last state change (audit, FR-005) |
 | state_changed_by | String | No | System | Operator who made the last state change (audit, FR-005) |
@@ -191,3 +192,16 @@ FR-018; PRD §10).
 - **No participant deduplication yet (FR-025, not in FEAT-004 scope):** `addParticipantRecord` does not
   check for an existing participant with the same email/contact handle; duplicate detection is a
   separate, not-yet-built feature.
+- **Daily push list exclusion (FEAT-005, FR-008):** the push list excludes `withdrawn` participants
+  and any participant currently snoozed (`snoozed_until` in the future); a participant racing both
+  the `contract_signed` and `deposit_confirmed` deadlines at once can legitimately appear in both
+  transition groups, since the reminder fields are per-participant, not per-transition.
+- **No operator attribution for reminders (FEAT-005):** unlike funnel state changes
+  (`state_changed_by`), snoozing/nudging/dismissing does not record *who* acted — no acceptance
+  criterion in FR-009 requires it, and bolting it onto `state_changed_by` would be semantically wrong
+  (that field is tied to funnel-state changes, and reminders never change `current_state`). The
+  action still requires an authenticated operator session; only the identity isn't persisted.
+- **Reminder message templates are draft copy `[PROPOSED — confirm]`:** the Spanish, informal-respectful
+  wording in `src/lib/reminders.ts` is a first pass for the team to review, same treatment as the
+  F1/F2 user-facing strings (FEAT-001/002). `{amount}`/`{payment_reference}` are not interpolated —
+  Solanum has no price/payment fields yet (FR-013/PriceTier is a separate, not-yet-built feature).
