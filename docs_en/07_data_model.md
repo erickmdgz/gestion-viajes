@@ -272,3 +272,9 @@ FR-018; PRD §10).
   — if `contract_signed`/`deposit_confirmed` is toggled *after* F2 is marked complete, the participant
   will silently move off "F2 complete." No acceptance criterion covers this ordering; fixing it would
   mean teaching `deriveState` about a state outside its current scope for no tested benefit.
+- **Promotional content has no entity/table (FEAT-010, FR-016).** `generatePromoIdeas`
+  (`src/lib/promo.ts`) is a pure, local, deterministic template generator keyed off `Trip.name` and
+  `Trip.registration_close` only — no LLM API call, no new dependency, no persistence. "Requesting
+  content" is just viewing `/dashboard/trips/{tripId}/promo`; nothing is stored, same "computed on
+  demand" treatment as overdue flagging (FR-006) and price-tier resolution (FR-013). Draft copy is
+  `[PROPOSED — confirm]`, same treatment as FEAT-005's reminder templates.

@@ -129,3 +129,9 @@ Public, unauthenticated page, same pattern as the itinerary share page:
 | Route | Method | Purpose |
 |---|---|---|
 | `/share/[tripId]/notices` | GET | FR-015: lists every published `notice`/`payment-reminder` for the trip, most recent first, via `listPublishedNotices` (`src/lib/notices.ts`) |
+
+## Generate promotional content ideas (FEAT-010)
+
+No action, no endpoint — `/dashboard/trips/[tripId]/promo` (board-only, behind `/dashboard`) computes
+draft content ideas and image prompts on render via `generatePromoIdeas` (`src/lib/promo.ts`), a pure
+local template function. "Requesting content" (FR-016) is just opening the page.

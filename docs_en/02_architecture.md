@@ -33,7 +33,7 @@ opens the view; a background scheduler is deferred to the deploy phase.
 
 Implemented in FEAT-003 (baseline), FEAT-004 (funnel core), FEAT-005 (reminders), FEAT-001 (F1
 public intake), FEAT-006 (agency document layer), FEAT-007 (live price tier), FEAT-008 (publish
-itinerary) and FEAT-009 (publish notices):
+itinerary), FEAT-009 (publish notices) and FEAT-010 (promo ideas):
 
 ```txt
 prisma/          # schema.prisma (Operator, Trip, Participant) + migrations/ + seed.ts
@@ -57,6 +57,7 @@ src/
       trips/[tripId]/pricing/actions.ts   # "use server" addPriceTier
       trips/[tripId]/notices/page.tsx     # compose + list published notices/payment-reminders (FEAT-009)
       trips/[tripId]/notices/actions.ts   # "use server" publishNoticeAction
+      trips/[tripId]/promo/page.tsx       # local template-based content ideas + image prompts, no action (FEAT-010)
     share/[tripId]/itinerary/page.tsx     # public, no session — live-resolves the current itinerary (FEAT-008)
     share/[tripId]/notices/page.tsx       # public, no session — lists published notices, most recent first (FEAT-009)
     api/auth/[...nextauth]/       # Auth.js route handler
@@ -76,6 +77,8 @@ src/
     notices.ts           # Notice reads/writes; resolvePublishedItineraryFileRef is the live lookup
                           # the public share page resolves against on every visit (FR-014).
                           # publishNotice/listPublishedNotices implement the FR-015 feed (FEAT-009)
+    promo.ts              # pure, local, deterministic content-idea + image-prompt generator (FR-016) —
+                          # no LLM API call, no new dependency, no persistence
   middleware.ts  # route protection (redirects unauthenticated /dashboard* to /login)
 docs_en/         # living product documentation
 ```

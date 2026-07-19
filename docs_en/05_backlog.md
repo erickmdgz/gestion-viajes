@@ -14,6 +14,7 @@
 | FEAT-007 | Feature | Live price tier by confirmed group size | High | In progress | FR-013 |
 | FEAT-008 | Feature | Publish the current itinerary as a shareable link | High | In progress | FR-014 |
 | FEAT-009 | Feature | Publish notices and payment-date reminders | Medium | In progress | FR-015 |
+| FEAT-010 | Feature | Generate promotional content ideas and image prompts | Medium | In progress | FR-016 |
 
 ## Allowed types
 
