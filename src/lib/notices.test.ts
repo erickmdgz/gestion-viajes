@@ -15,8 +15,13 @@ execSync("npx prisma db push --skip-generate --accept-data-loss", {
 
 const prisma = new PrismaClient();
 
-const { publishItinerary, getItineraryNotice, resolvePublishedItineraryFileRef } =
-  await import("@/lib/notices");
+const {
+  publishItinerary,
+  getItineraryNotice,
+  resolvePublishedItineraryFileRef,
+  publishNotice,
+  listPublishedNotices,
+} = await import("@/lib/notices");
 const { registerDocumentRecord, markDocumentCurrent } = await import("@/lib/agencyDocuments");
 const { createTripRecord } = await import("@/lib/trips");
 
@@ -124,5 +129,52 @@ describe("getItineraryNotice / re-publishing", () => {
 
     const notices = await prisma.notice.findMany({ where: { tripId: trip.id } });
     expect(notices).toHaveLength(1);
+  });
+});
+
+describe("publishNotice / listPublishedNotices (TC-033)", () => {
+  it("creates a new row per publish — a feed, not a slot", async () => {
+    const trip = await seedTrip();
+
+    await publishNotice(trip.id, { type: "notice", body: "Meeting moved to Wednesday." });
+    await publishNotice(trip.id, { type: "notice", body: "Bring your passport." });
+
+    const notices = await listPublishedNotices(trip.id);
+    expect(notices).toHaveLength(2);
+  });
+
+  it("returns notices most-recent-first and includes payment reminders", async () => {
+    const trip = await seedTrip();
+
+    const first = await publishNotice(trip.id, { type: "notice", body: "First notice." });
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    const second = await publishNotice(trip.id, {
+      type: "payment-reminder",
+      body: "Deposit due June 1st.",
+    });
+
+    const notices = await listPublishedNotices(trip.id);
+    expect(notices.map((n) => n.id)).toEqual([second.id, first.id]);
+    expect(notices[0].type).toBe("payment-reminder");
+  });
+
+  it("does not mix in another trip's notices or the itinerary notice", async () => {
+    const tripA = await seedTrip();
+    const tripB = await seedTrip();
+    const v1 = await registerDocumentRecord(tripA.id, {
+      type: "itinerary",
+      versionLabel: "v1",
+      date: new Date("2026-01-01T00:00:00Z"),
+      changelog: null,
+      fileRef: "https://drive.example.com/v1",
+    });
+    await markDocumentCurrent(v1.id);
+    await publishItinerary(tripA.id);
+    await publishNotice(tripA.id, { type: "notice", body: "For trip A only." });
+    await publishNotice(tripB.id, { type: "notice", body: "For trip B only." });
+
+    const noticesForA = await listPublishedNotices(tripA.id);
+    expect(noticesForA).toHaveLength(1);
+    expect(noticesForA[0].body).toBe("For trip A only.");
   });
 });
