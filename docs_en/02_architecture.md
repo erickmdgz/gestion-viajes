@@ -31,12 +31,16 @@ opens the view; a background scheduler is deferred to the deploy phase.
 
 ## Project structure
 
-Implemented in FEAT-003 (baseline), FEAT-004 (funnel core) and FEAT-005 (reminders):
+Implemented in FEAT-003 (baseline), FEAT-004 (funnel core), FEAT-005 (reminders) and FEAT-001 (F1
+public intake):
 
 ```txt
 prisma/          # schema.prisma (Operator, Trip, Participant) + migrations/ + seed.ts
 src/
   app/
+    apply/[tripId]/page.tsx        # public F1 intake form, no session (FEAT-001)
+    apply/[tripId]/actions.ts      # "use server" registerParticipant
+    apply/[tripId]/thanks/page.tsx # static confirmation
     dashboard/
       page.tsx                       # trip list (FEAT-004)
       trips/new/page.tsx             # create-trip form
@@ -54,17 +58,20 @@ src/
     authz.ts      # requireOperator() — auth check reused by every action (FEAT-004)
     funnel.ts       # pure state machine + overdue math (FR-005/FR-006)
     reminders.ts     # pure push-list grouping/sorting + message templates (FR-007/008/009)
+    f1Registration.ts # pure zod schema + validator for the public F1 form (FR-001)
     trips.ts       # Trip reads/writes
-    participants.ts # Participant reads/writes, wraps funnel.ts and reminders.ts
+    participants.ts # Participant reads/writes, wraps funnel.ts, reminders.ts and f1Registration.ts
   middleware.ts  # route protection (redirects unauthenticated /dashboard* to /login)
 docs_en/         # living product documentation
 ```
 
 Mutations (create trip, add/withdraw participant, toggle a transition flag, record a nudge,
 snooze/dismiss) go through **Next.js Server Actions**, not REST API routes — see `06_api.md`. Every
-action calls `requireOperator()` first (auth required on every action, not just the page shell).
-Database migrations use `prisma migrate dev` starting with FEAT-004 (`npm run db:migrate`); `db:push`
-remains available for quick local iteration.
+**board-facing** action calls `requireOperator()` first (auth required on every action, not just the
+page shell). The one deliberate exception is `registerParticipant` (FEAT-001, FR-001): the F1 form is
+public by design (participants never log in — NF-2/NF-8), so its only guards are input validation and
+the write itself. Database migrations use `prisma migrate dev` starting with FEAT-004
+(`npm run db:migrate`); `db:push` remains available for quick local iteration.
 
 `copy-button.tsx` (FEAT-005) is the app's **first Client Component beyond `/login`** — justified
 because clipboard access (`navigator.clipboard.writeText`) has no server-side equivalent. It receives

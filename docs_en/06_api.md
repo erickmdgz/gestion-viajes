@@ -65,5 +65,18 @@ on demand by `src/lib/reminders.ts` (`buildPushList`, `renderReminderMessage`) w
 renders. Copy-to-clipboard (FR-007 AC2) happens entirely client-side in `copy-button.tsx`; no server
 round-trip, no PII in a URL.
 
+## F1 public registration — Next.js Server Action (FEAT-001)
+
+A single **public** Server Action, the only one that does not call `requireOperator()` — by design,
+participants never log in (NF-2/NF-8).
+
+| Action | File | Purpose |
+|---|---|---|
+| `registerParticipant(tripId, formData)` | `src/app/apply/[tripId]/actions.ts` | FR-001: validates the F1 submission (`src/lib/f1Registration.ts`) and creates the participant at `Registered (F1)` |
+
+The form itself is a public route, `src/app/apply/[tripId]/page.tsx` — not under `/dashboard`, so
+`src/middleware.ts` does not (and must not) protect it. An unknown `tripId` 404s. No PII is placed in
+the URL; the trip is identified only by its opaque UUID in the path.
+
 <!-- Remaining business features (agency docs, price tiers, …) will be documented here as
      the corresponding FEATs are built. -->

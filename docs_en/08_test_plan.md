@@ -18,9 +18,9 @@ The system's main flows will be tested before closing each feature.
 
 | ID | Feature | Requirement | Case | Expected result | Status |
 |---|---|---|---|---|---|
-| TC-001 | FEAT-001 | FR-001 | Submit F1 with all required fields and consent | `participant` created with `current_state = "Registered (F1)"`, `privacy_consent = true`, `consent_timestamp` set | Pending |
-| TC-002 | FEAT-001 | FR-001 | Submit F1 missing a required field (e.g. student_id or consent) | Submission rejected; the missing field is flagged; no record created | Pending |
-| TC-003 | FEAT-001 | FR-001 | Submit F1 with invalid format (student_id ≠ `A########`, age < 18, invalid email) | Submission rejected; the offending field is flagged | Pending |
+| TC-001 | FEAT-001 | FR-001 | Submit F1 with all required fields and consent | `participant` created with `current_state = "Registered (F1)"`, `privacy_consent = true`, `consent_timestamp` set | Passed (automated: `src/lib/f1Registration.test.ts`, `src/lib/participants.test.ts`; manual: curl-verified public submission with no session against the running app) |
+| TC-002 | FEAT-001 | FR-001 | Submit F1 missing a required field (e.g. student_id or consent) | Submission rejected; the missing field is flagged; no record created | Passed (automated: `f1Registration.test.ts`; manual: curl-verified missing-consent rejection, 0 records created) |
+| TC-003 | FEAT-001 | FR-001 | Submit F1 with invalid format (student_id ≠ `A########`, age < 18, invalid email) | Submission rejected; the offending field is flagged | Passed (automated: `f1Registration.test.ts`; manual: curl-verified invalid student_id rejection with the correct Spanish message) |
 | TC-004 | FEAT-002 | FR-002 | Board marks a confirmed participant's F2 as complete | `F2_complete = true`, `F2_completed_at` set, `current_state = "F2 complete"` | Pending |
 | TC-005 | FEAT-002 | FR-002 | Inspect participant record after F2 completion | No F2 sensitive field (passport, birth date, medical, diet) is persisted in Solanum | Pending |
 | TC-006 | FEAT-004 | FR-003 | Create a trip with a deadline per transition | Trip persisted; each transition stores its deadline source (absolute date or N-days-relative) | Passed (automated: `src/lib/trips.test.ts`; manual: curl-verified `createTrip` against the running app) |
