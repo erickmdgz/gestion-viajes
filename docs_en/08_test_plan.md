@@ -45,11 +45,11 @@ The system's main flows will be tested before closing each feature.
 | TC-025 | FEAT-006 | FR-011 | Three budget versions; board marks v3 current | v1 and v2 show "superseded"; only v3 is current and served to distribution | Passed (automated: `agencyDocuments.test.ts`; manual: curl-verified against the running app) |
 | TC-026 | FEAT-006 | FR-011 | Type already has a current version; another is marked current | Exactly one remains current; the previous becomes superseded | Passed (automated: `agencyDocuments.test.ts` — the `$transaction` invariant tested directly) |
 | TC-027 | FEAT-006 | FR-012 | Board records a free-text changelog on a version | Note stored and shown with that version | Passed (automated: `agencyDocuments.test.ts`; manual: curl-verified against the running app) |
-| TC-028 | Agency layer | FR-013 | Tiers [10–19:$X],[20–29:$Y], 20 confirmed; a 21st confirms | Displayed tier stays [20–29] | Pending |
-| TC-029 | Agency layer | FR-013 | Same tiers; a confirmed participant reverted below 20 | Tier re-resolves to [10–19] | Pending |
-| TC-030 | Agency layer | FR-013 | Confirmed count below the smallest tier | Tool shows "no tier / below minimum" (no guess) | Pending |
-| TC-031 | FEAT-008 | FR-014 | Board publishes the current itinerary | Shareable link/file produced for the confirmed group, pointing to the current version | Passed (automated: `src/lib/notices.test.ts`; manual: curl-verified `/share/{tripId}/itinerary` redirects to the current fileRef with no session) |
-| TC-032 | FEAT-008 | FR-014 | Current itinerary superseded by a new current version; shared link opened | Link serves the new current version | Passed (automated: `notices.test.ts`, tested directly by marking a new version current without republishing; manual: curl-verified the same URL now redirects to the new version) |
+| TC-028 | FEAT-007 | FR-013 | Tiers [10–19:$X],[20–29:$Y], 20 confirmed; a 21st confirms | Displayed tier stays [20–29] | Passed (automated: `src/lib/priceTiers.test.ts`; manual: curl-verified 20→21 against the running app) |
+| TC-029 | FEAT-007 | FR-013 | Same tiers; a confirmed participant reverted below 20 | Tier re-resolves to [10–19] | Passed (automated: `priceTiers.test.ts`; manual: curl-verified reverting to 19 against the running app) |
+| TC-030 | FEAT-007 | FR-013 | Confirmed count below the smallest tier | Tool shows "no tier / below minimum" (no guess) | Passed (automated: `priceTiers.test.ts`; manual: curl-verified at 9 confirmed against the running app) |
+| TC-031 | Distribution | FR-014 | Board publishes the current itinerary | Shareable link/file produced for the confirmed group, pointing to the current version | Pending |
+| TC-032 | Distribution | FR-014 | Current itinerary superseded by a new current version; shared link opened | Link serves the new current version | Pending |
 | TC-033 | Distribution | FR-015 | Board publishes a notice / payment-date reminder | Available as shareable content | Pending |
 | TC-034 | Distribution | FR-016 | Board requests promotional content | Draft content ideas and image prompts generated | Pending |
 | TC-035 | Visits | FR-017 | Board advances a visit through contact → confirmation → scheduled | Status recorded at each stage | Pending |

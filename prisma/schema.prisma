@@ -39,7 +39,7 @@ model Trip {
   createdAt                    DateTime      @default(now())
   participants                 Participant[]
   agencyDocuments              AgencyDocument[]
-  notices                      Notice[]
+  priceTiers                   PriceTier[]
 }
 
 // A student moving through the funnel toward a confirmed trip seat.
@@ -106,19 +106,16 @@ model AgencyDocument {
   @@index([tripId, type])
 }
 
-// A piece of distributed content for the confirmed group (FR-014/015).
-// Only type = "itinerary" is wired up in FEAT-008; FR-015's generic
-// notice/payment-reminder publishing is a separate, not-yet-built feature.
-// contentRef stores the stable Solanum share path (e.g.
-// /share/{tripId}/itinerary), not the underlying agency file link — that
-// indirection is what lets the link survive a version change (FR-014 TC-032).
-model Notice {
-  id          String    @id @default(uuid())
-  tripId      String
-  trip        Trip      @relation(fields: [tripId], references: [id], onDelete: Cascade)
-  type        String
-  contentRef  String
-  publishedAt DateTime?
+// An agency price band by confirmed group size (FR-013). `price` is a plain
+// Int (whole currency units, no cents) — Solanum does not process money;
+// this is a display-only figure for the board (product vision).
+model PriceTier {
+  id      String @id @default(uuid())
+  tripId  String
+  trip    Trip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  minSize Int
+  maxSize Int
+  price   Int
 
-  @@unique([tripId, type])
+  @@index([tripId])
 }

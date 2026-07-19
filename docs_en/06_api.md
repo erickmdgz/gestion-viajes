@@ -92,17 +92,14 @@ Also Server Actions, not REST. Board-only, `requireOperator()` first.
 `file_ref` is a link/URL only — there is no file upload endpoint; Solanum does not store the agency's
 actual documents (ADR-002, agency-as-receiver principle).
 
-## Publish the current itinerary (FEAT-008)
+## Live price tier — Next.js Server Action (FEAT-007)
 
-`publishItinerary` (above) is the only mutation. The actual sharing is a **public, unauthenticated
-page**, not an API endpoint:
+Board-only, `requireOperator()` first.
 
-| Route | Method | Purpose |
+| Action | File | Purpose |
 |---|---|---|
-| `/share/[tripId]/itinerary` | GET | FR-014: redirects to whichever `AgencyDocument.fileRef` is currently current for type `itinerary`; re-resolved on every visit (not a snapshot — TC-032), so the link never needs to change when the current version does. Shows "not available yet" if nothing has been published. |
+| `addPriceTier(tripId, formData)` | `src/app/dashboard/trips/[tripId]/pricing/actions.ts` | FR-013: registers a price band (min size, max size, price) |
 
-Not under `/dashboard`; `src/middleware.ts` does not (and must not) protect it — same pattern as
-`/apply/[tripId]` (FEAT-001).
-
-<!-- Remaining business features (price tiers, …) will be documented here as
-     the corresponding FEATs are built. -->
+Tier resolution is not an endpoint — computed on demand by `src/lib/priceTiers.ts`
+(`resolvePriceTier`, `countConfirmedParticipants`) when the pricing page renders, same "computed on
+demand" principle as overdue flagging and the daily push list.
