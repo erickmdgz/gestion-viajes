@@ -159,15 +159,24 @@ legend {
   margin-right: 0.4rem;
 }
 
-.badge-overdue {
+.badge-overdue,
+.badge-current {
   display: inline-block;
-  color: var(--error);
-  border: 1px solid var(--error);
   border-radius: 0.375rem;
   padding: 0.1rem 0.4rem;
   font-size: 0.75rem;
   font-weight: 600;
   margin-left: 0.4rem;
+}
+
+.badge-overdue {
+  color: var(--error);
+  border: 1px solid var(--error);
+}
+
+.badge-current {
+  color: var(--accent);
+  border: 1px solid var(--accent);
 }
 
 button {

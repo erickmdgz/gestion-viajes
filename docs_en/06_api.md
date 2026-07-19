@@ -79,5 +79,17 @@ The form itself is a public route, `src/app/apply/[tripId]/page.tsx` — not und
 `src/middleware.ts` does not (and must not) protect it. An unknown `tripId` 404s. No PII is placed in
 the URL; the trip is identified only by its opaque UUID in the path.
 
-<!-- Remaining business features (agency docs, price tiers, …) will be documented here as
+## Agency document layer — Next.js Server Actions (FEAT-006)
+
+Also Server Actions, not REST. Board-only, `requireOperator()` first.
+
+| Action | File | Purpose |
+|---|---|---|
+| `addDocument(tripId, formData)` | `src/app/dashboard/trips/[tripId]/documents/actions.ts` | FR-010: registers a document version (type, version label, date, optional link, optional changelog) |
+| `markCurrent(tripId, documentId)` | same | FR-011: marks one version current; atomically unsets any other current version of the same (trip, type) |
+
+`file_ref` is a link/URL only — there is no file upload endpoint; Solanum does not store the agency's
+actual documents (ADR-002, agency-as-receiver principle).
+
+<!-- Remaining business features (price tiers, …) will be documented here as
      the corresponding FEATs are built. -->
