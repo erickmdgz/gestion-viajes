@@ -38,6 +38,7 @@ model Trip {
   timezone                     String        @default("America/Mexico_City")
   createdAt                    DateTime      @default(now())
   participants                 Participant[]
+  agencyDocuments              AgencyDocument[]
 }
 
 // A student moving through the funnel toward a confirmed trip seat.
@@ -80,4 +81,23 @@ model Participant {
   createdAt            DateTime  @default(now())
 
   @@index([tripId])
+}
+
+// A versioned document received from the agency (itinerary, budget). Manages
+// version chaos rather than eliminating it (agency-as-receiver principle,
+// FR-010/011/012). file_ref is a link/reference only — no real file upload
+// (local-first, no cloud storage; the agency keeps its own PDF flow).
+model AgencyDocument {
+  id           String   @id @default(uuid())
+  tripId       String
+  trip         Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  type         String
+  versionLabel String
+  date         DateTime
+  isCurrent    Boolean  @default(false)
+  changelog    String?
+  fileRef      String?
+  createdAt    DateTime @default(now())
+
+  @@index([tripId, type])
 }
