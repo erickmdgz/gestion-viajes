@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import type { Participant } from "@prisma/client";
 import { FUNNEL_STATES, type FunnelState, deriveState, isConfirmed } from "@/lib/funnel";
 import { computeSnoozedUntil } from "@/lib/reminders";
+import type { F1RegistrationInput } from "@/lib/f1Registration";
 
 const PRE_CONTRACT_STATES: string[] = [FUNNEL_STATES.INTERESTED, FUNNEL_STATES.REGISTERED_F1];
 
@@ -28,6 +29,38 @@ export function addParticipantRecord(
       currentState: data.initialState,
       stateChangedAt: new Date(),
       stateChangedBy: operatorEmail,
+    },
+  });
+}
+
+// Public self-registration path (FR-001, FEAT-001). No operator acts here —
+// `stateChangedBy` stays null — unlike the board-manual path (FR-004).
+export function registerParticipantViaF1(
+  tripId: string,
+  data: F1RegistrationInput,
+): Promise<Participant> {
+  const now = new Date();
+  return prisma.participant.create({
+    data: {
+      tripId,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      preferredName: data.preferredName || null,
+      studentId: data.studentId,
+      age: data.age,
+      career: data.career,
+      semester: data.semester,
+      phone: data.phone,
+      instagram: data.instagram || null,
+      nationality: data.nationality,
+      passportStatus: data.passportStatus,
+      visaStatus: data.visaStatus,
+      whatsappGroupConsent: data.whatsappGroupConsent,
+      privacyConsent: data.privacyConsent,
+      consentTimestamp: now,
+      currentState: FUNNEL_STATES.REGISTERED_F1,
+      stateChangedAt: now,
     },
   });
 }
