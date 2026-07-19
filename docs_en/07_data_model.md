@@ -165,14 +165,28 @@ An agency price band by group size; drives the live tier resolution (FR-013; PRD
 ## Entity: Notice
 
 A piece of distributed content for the confirmed group (FR-014, FR-015; PRD §12.3).
+**`type = "itinerary"` implemented in FEAT-008** (FR-014); `notice`/`payment-reminder` (FR-015) are
+not yet built — the model already supports them, only their actions/UI are out of this FEAT's scope.
 
 | Field | Type | Required | Description |
 |---|---|---|---|
 | id | UUID | Yes | Unique identifier |
 | trip_id | UUID | Yes | Trip the notice belongs to |
-| type | String | Yes | itinerary / notice / payment-reminder |
-| content_ref | String | Yes | Link or file with the shareable content |
-| published_at | DateTime | No | When it was published |
+| type | String | Yes | itinerary / notice / payment-reminder. Unique per (trip_id, type) |
+| content_ref | String | Yes | For `itinerary`: the **stable Solanum share path** (`/share/{trip_id}/itinerary`), not the underlying agency file link — see rule below |
+| published_at | DateTime | No | When it was published; `null` means never published (the share link shows "not available yet") |
+
+- **The itinerary share link is a live lookup, not a snapshot (FR-014, resolves TC-032).**
+  `resolvePublishedItineraryFileRef` (`src/lib/notices.ts`) re-resolves the trip's *current*
+  `AgencyDocument` of type `itinerary` (FR-011) on every visit to `/share/{trip_id}/itinerary`. When
+  the board marks a new version current, the same published link starts serving it immediately —
+  publishing again is never required.
+- **Publishing is gated** on a current itinerary `AgencyDocument` already existing; it is idempotent
+  (publishing again just refreshes `published_at`).
+- **Case-sensitive type match, documented constraint:** the lookup compares `AgencyDocument.type` to
+  the literal string `"itinerary"`. SQLite's `=` is case-sensitive and Prisma's `mode: "insensitive"`
+  filter isn't supported on SQLite, so a document registered as `"Itinerary"` (different casing) will
+  not be found. No acceptance criterion requires case-insensitive matching.
 
 ## Entity: Visit
 

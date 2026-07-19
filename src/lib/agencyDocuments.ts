@@ -27,6 +27,14 @@ export function listDocumentsForTrip(tripId: string): Promise<AgencyDocument[]> 
   });
 }
 
+// FR-014: the live lookup a published share link resolves against. Exact
+// string match on `type` — SQLite's `=` is case-sensitive and Prisma's
+// `mode: "insensitive"` isn't supported on SQLite; documented constraint,
+// not engineered around (see docs_en/07_data_model.md).
+export function getCurrentDocument(tripId: string, type: string): Promise<AgencyDocument | null> {
+  return prisma.agencyDocument.findFirst({ where: { tripId, type, isCurrent: true } });
+}
+
 // FR-011: exactly one is_current per (trip, type), always — atomic via a
 // transaction so a concurrent board member never observes two currents or
 // zero for the same type.

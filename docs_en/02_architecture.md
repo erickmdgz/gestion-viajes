@@ -75,8 +75,9 @@ docs_en/         # living product documentation
 Mutations (create trip, add/withdraw participant, toggle a transition flag, record a nudge,
 snooze/dismiss) go through **Next.js Server Actions**, not REST API routes — see `06_api.md`. Every
 **board-facing** action calls `requireOperator()` first (auth required on every action, not just the
-page shell). The one deliberate exception is `registerParticipant` (FEAT-001, FR-001): the F1 form is
-public by design (participants never log in — NF-2/NF-8), so its only guards are input validation and
+page shell). The deliberate exceptions are `registerParticipant` (FEAT-001, FR-001) and the read-only
+`/share/[tripId]/itinerary` page (FEAT-008, FR-014): both are public by design (participants never
+log in — NF-2/NF-8). `registerParticipant`'s only guards are input validation and
 the write itself. Database migrations use `prisma migrate dev` starting with FEAT-004
 (`npm run db:migrate`); `db:push` remains available for quick local iteration.
 

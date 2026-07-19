@@ -87,6 +87,7 @@ Also Server Actions, not REST. Board-only, `requireOperator()` first.
 |---|---|---|
 | `addDocument(tripId, formData)` | `src/app/dashboard/trips/[tripId]/documents/actions.ts` | FR-010: registers a document version (type, version label, date, optional link, optional changelog) |
 | `markCurrent(tripId, documentId)` | same | FR-011: marks one version current; atomically unsets any other current version of the same (trip, type) |
+| `publishItinerary(tripId)` | same | FR-014: gated on a current itinerary document existing; idempotent |
 
 `file_ref` is a link/URL only — there is no file upload endpoint; Solanum does not store the agency's
 actual documents (ADR-002, agency-as-receiver principle).

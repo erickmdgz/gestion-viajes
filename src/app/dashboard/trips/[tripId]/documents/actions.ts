@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireOperator } from "@/lib/authz";
 import { registerDocumentRecord, markDocumentCurrent } from "@/lib/agencyDocuments";
+import { publishItinerary as publishItineraryRecord } from "@/lib/notices";
 
 const addDocumentSchema = z.object({
   type: z.string().min(1, "Document type is required"),
@@ -44,5 +45,16 @@ export async function addDocument(tripId: string, formData: FormData): Promise<v
 export async function markCurrent(tripId: string, documentId: string): Promise<void> {
   await requireOperator();
   await markDocumentCurrent(documentId);
+  revalidatePath(`/dashboard/trips/${tripId}/documents`);
+}
+
+export async function publishItinerary(tripId: string): Promise<void> {
+  await requireOperator();
+  try {
+    await publishItineraryRecord(tripId);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Could not publish the itinerary";
+    redirect(`/dashboard/trips/${tripId}/documents?error=${encodeURIComponent(message)}`);
+  }
   revalidatePath(`/dashboard/trips/${tripId}/documents`);
 }
