@@ -45,6 +45,7 @@ unauthenticated page load is (NFR-002 / NF-8).
 | `withdrawParticipant(tripId, participantId, formData)` | `src/app/dashboard/trips/[tripId]/actions.ts` | Terminal Withdrawn/Declined state (§6.4) |
 | `markContractSent(participantId, operatorEmail)` | `src/lib/participants.ts` (inline action on the roster page) | Board-action gate into "Contract sent" (FR-003 AC2) |
 | `applyTransitionFlag(participantId, flag, value, operatorEmail)` | `src/lib/participants.ts` (inline action on the roster page) | FR-005: sets/clears `contractSigned`/`depositConfirmed`; `confirmed` is derived, never set directly |
+| `markF2Complete(participantId, operatorEmail)` | `src/lib/participants.ts` (inline action on the roster page) | FR-002: records F2 status only (never the sensitive F2 answers, ADR-001); only callable from Contract signed/Deposit confirmed/Confirmed |
 
 Overdue flagging (FR-006) is not an endpoint — it is computed on demand (`src/lib/funnel.ts`,
 `isParticipantOverdue`) when the roster page renders, per `02_architecture.md`'s "computed on

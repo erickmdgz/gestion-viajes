@@ -31,8 +31,8 @@ opens the view; a background scheduler is deferred to the deploy phase.
 
 ## Project structure
 
-Implemented in FEAT-003 (baseline), FEAT-004 (funnel core), FEAT-005 (reminders) and FEAT-001 (F1
-public intake):
+Implemented in FEAT-003 (baseline), FEAT-004 (funnel core), FEAT-005 (reminders), FEAT-001 (F1
+public intake) and FEAT-002 (F2 status tracking):
 
 ```txt
 prisma/          # schema.prisma (Operator, Trip, Participant) + migrations/ + seed.ts
@@ -45,7 +45,7 @@ src/
       page.tsx                       # trip list (FEAT-004)
       trips/new/page.tsx             # create-trip form
       trips/actions.ts               # "use server" createTrip
-      trips/[tripId]/page.tsx        # roster: state, overdue flag, transition controls
+      trips/[tripId]/page.tsx        # roster: state, overdue flag, transition + F2 controls (FEAT-002)
       trips/[tripId]/actions.ts      # "use server" addParticipant, withdrawParticipant
       trips/[tripId]/push/page.tsx   # daily push list: message, copy, nudge/snooze/dismiss (FEAT-005)
       trips/[tripId]/push/actions.ts # "use server" recordNudge, snoozeParticipant, dismissParticipantToday

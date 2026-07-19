@@ -66,6 +66,13 @@ schedule, etc.) is **not rendered on the live page** — `Trip` has no such fiel
 acceptance criterion requires it; the public page only shows `trip.name` plus the form itself. A
 deliberate v1 scope trim, not a bug.
 
+**FEAT-002 implements the F2 status subset** (`F2_complete`, `F2_completed_at`, `F2_verified_by`) —
+one note on how it differs from the table below: **there is no `F2_verified_at` column.** In this
+design, marking F2 complete *is* the verification act (there is no separate "participant reports
+completion" step) — a second timestamp identical to `F2_completed_at` would be redundant, so only one
+is kept. `F2_verified_by` is kept because it captures something the timestamp doesn't: which operator
+acted, mirroring `state_changed_by`.
+
 | Field | Type | Required | Source | Description |
 |---|---|---|---|---|
 | id | UUID | Yes | System | Unique identifier |
@@ -89,9 +96,8 @@ deliberate v1 scope trim, not a bug.
 | current_state | String | Yes | System | Funnel state (see states below) |
 | created_at | DateTime | Yes | System | Record creation date |
 | F2_complete | Boolean | No | F2 status | Whether F2 was completed (default false) |
-| F2_completed_at | DateTime | No | F2 status | When F2 was marked complete |
-| F2_verified_by | String | No | F2 status | Board member who verified F2 (optional audit) |
-| F2_verified_at | DateTime | No | F2 status | When F2 was verified (optional audit) |
+| F2_completed_at | DateTime | No | F2 status | When F2 was marked complete (also the verification timestamp — see note above) |
+| F2_verified_by | String | No | F2 status | Operator who marked F2 complete |
 | contract_signed | Boolean | No | Funnel | Flag set by the board (FR-005) |
 | deposit_confirmed | Boolean | No | Funnel | Flag set by the board (FR-005) |
 | confirmed | Boolean | No | Derived | Auto-derived: `contract_signed` AND `deposit_confirmed` (§6.3, FR-005) |
@@ -219,3 +225,9 @@ FR-018; PRD §10).
   wording in `src/lib/reminders.ts` is a first pass for the team to review, same treatment as the
   F1/F2 user-facing strings (FEAT-001/002). `{amount}`/`{payment_reference}` are not interpolated —
   Solanum has no price/payment fields yet (FR-013/PriceTier is a separate, not-yet-built feature).
+- **F2 eligibility gate (FEAT-002, FR-002):** `markF2Complete` only succeeds from `Contract signed`,
+  `Deposit confirmed`, or `Confirmed`; it sets `current_state = "F2 complete"` directly rather than
+  through `deriveState`. **Known accepted gap:** `deriveState` has no notion of the F2-complete state
+  — if `contract_signed`/`deposit_confirmed` is toggled *after* F2 is marked complete, the participant
+  will silently move off "F2 complete." No acceptance criterion covers this ordering; fixing it would
+  mean teaching `deriveState` about a state outside its current scope for no tested benefit.

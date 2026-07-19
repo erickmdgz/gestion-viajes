@@ -148,7 +148,7 @@ These stay in the external tool (Google Forms/Drive) controlled by the organizin
 - [x] Update test plan (`08_test_plan.md`).
 - [x] New ADR (`decisions/ADR-001_f2_sensitive_data_not_stored.md`).
 - [x] Feature doc (this file).
-- [ ] API spec — not applicable (no endpoints in v1 yet).
+- [x] Update API doc (`06_api.md` — `markF2Complete` Server Action).
 - [ ] Release notes — on release to `main`.
 
 ## 11. Checklist before implementing
@@ -162,9 +162,10 @@ These stay in the external tool (Google Forms/Drive) controlled by the organizin
 
 ## 12. Checklist before closing
 
-- [ ] Implemented.
-- [ ] Tests executed.
-- [ ] Acceptance criteria met.
+- [x] Implemented — `markF2Complete` (`src/lib/participants.ts`), a "Mark F2 complete" button on the
+  roster page. No `F2_verified_at` column (redundant with `F2_completed_at`, see `07_data_model.md`).
+- [x] Tests executed (`npm run test` — 56/56 passing; manual end-to-end pass against the running app).
+- [x] Acceptance criteria met (TC-004, TC-005).
 - [ ] Pull request reviewed.
-- [ ] Documentation updated.
+- [x] Documentation updated.
 - [ ] Release notes updated.
