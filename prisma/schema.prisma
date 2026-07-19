@@ -41,6 +41,7 @@ model Trip {
   agencyDocuments              AgencyDocument[]
   priceTiers                   PriceTier[]
   notices                      Notice[]
+  visits                       Visit[]
 }
 
 // A student moving through the funnel toward a confirmed trip seat.
@@ -143,4 +144,24 @@ model Notice {
   publishedAt DateTime?
 
   @@index([tripId, type])
+}
+
+// A company/institution visit target tracked through a pipeline (FR-017);
+// feeds the agency brief in a later feature (FR-018). Three explicit
+// stages, not derived: "contact" (initial) -> "confirmed" (board action,
+// markVisitConfirmed) -> "scheduled" (board sets a day/time on a confirmed
+// visit, scheduleVisit — setting the schedule is what advances the stage).
+model Visit {
+  id            String    @id @default(uuid())
+  tripId        String
+  trip          Trip      @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  targetName    String
+  targetType    String?
+  status        String    @default("contact")
+  scheduledDate DateTime?
+  scheduledTime String?
+  notes         String?
+  createdAt     DateTime  @default(now())
+
+  @@index([tripId])
 }

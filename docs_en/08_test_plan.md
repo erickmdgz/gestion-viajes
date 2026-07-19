@@ -52,8 +52,8 @@ The system's main flows will be tested before closing each feature.
 | TC-032 | FEAT-008 | FR-014 | Current itinerary superseded by a new current version; shared link opened | Link serves the new current version | Passed (automated: `notices.test.ts`, tested directly by marking a new version current without republishing; manual: curl-verified the same URL now redirects to the new version) |
 | TC-033 | FEAT-009 | FR-015 | Board publishes a notice / payment-date reminder | Available as shareable content | Passed (automated: `src/lib/notices.test.ts`; manual: curl-verified `/share/{tripId}/notices` lists published notices/payment-reminders with no session) |
 | TC-034 | Distribution | FR-016 | Board requests promotional content | Draft content ideas and image prompts generated | Pending |
-| TC-035 | Visits | FR-017 | Board advances a visit through contact → confirmation → scheduled | Status recorded at each stage | Pending |
-| TC-036 | Visits | FR-017 | Board sets a day and time on a confirmed visit | Scheduled day and time stored on the visit | Pending |
+| TC-035 | FEAT-011 | FR-017 | Board advances a visit through contact → confirmation → scheduled | Status recorded at each stage | Passed (automated: `src/lib/visits.test.ts`; manual: curl-verified full pipeline against the running app) |
+| TC-036 | FEAT-011 | FR-017 | Board sets a day and time on a confirmed visit | Scheduled day and time stored on the visit | Passed (automated: `visits.test.ts`; manual: curl-verified against the running app) |
 | TC-037 | Visits | FR-018 | Board generates a visit brief with confirmed/scheduled visits | Brief produced containing those visits | Pending |
 | TC-038 | Visits | FR-018 | A visit still at "contact"; board generates the brief | That unconfirmed visit is excluded from the brief | Pending |
 | TC-039 | Funnel view | FR-019 | Participants across states (incl. one Withdrawn); board opens funnel view | Count per state shown; Withdrawn/Declined excluded from active counts | Pending |
