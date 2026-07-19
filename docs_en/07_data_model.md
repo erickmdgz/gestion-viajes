@@ -113,18 +113,23 @@ This feature set (FEAT-001/FEAT-002) sets `Registered (F1)` and `F2 complete`.
 ## Entity: AgencyDocument
 
 A versioned document received from the agency (itinerary, budget). Manages version chaos (FR-010,
-FR-011, FR-012; PRD §9).
+FR-011, FR-012; PRD §9). **Implemented in FEAT-006.**
 
 | Field | Type | Required | Description |
 |---|---|---|---|
 | id | UUID | Yes | Unique identifier |
 | trip_id | UUID | Yes | Trip the document belongs to |
-| type | String | Yes | Document type (e.g. itinerary, budget) |
+| type | String | Yes | Document type — free text with suggested values ("itinerary", "budget"); not a closed enum, the PRD only gives those as examples |
 | version_label | String | Yes | Version label |
 | date | Date | Yes | Version date |
-| is_current | Boolean | Yes | Whether this is the current version for its type (default false) |
-| changelog | String | No | Free-text note of what changed vs. the previous version (FR-012) |
-| file_ref | String | No | Link or file reference to the document |
+| is_current | Boolean | Yes | Whether this is the current version for its type; always `false` at registration — set only by the separate "mark current" action (default false) |
+| changelog | String | No | Free-text note of what changed vs. the previous version (FR-012); captured at registration time, no separate later-edit action in v1 |
+| file_ref | String | No | Link/URL only — **no real file upload**. Local-first, no cloud storage (ADR-002); the agency keeps its own PDF flow (agency-as-receiver principle) |
+
+- **Exactly one `is_current = true` per (trip, type), always** — enforced atomically by
+  `markDocumentCurrent` (`src/lib/agencyDocuments.ts`) via a Prisma `$transaction` that unsets every
+  other document of the same (trip, type) and sets the target one, so a concurrent board member never
+  observes two currents or zero.
 
 ## Entity: PriceTier
 

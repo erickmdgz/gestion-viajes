@@ -31,7 +31,8 @@ export default async function TripRosterPage({
     <main className="wide">
       <h1>{trip.name}</h1>
       <p>
-        <Link href="/dashboard">&larr; Back to trips</Link> · <Link href={`/dashboard/trips/${tripId}/push`}>Push today &rarr;</Link>
+        <Link href="/dashboard">&larr; Back to trips</Link> · <Link href={`/dashboard/trips/${tripId}/push`}>Push today &rarr;</Link> ·{" "}
+        <Link href={`/dashboard/trips/${tripId}/documents`}>Documents &rarr;</Link>
       </p>
 
       <table>
