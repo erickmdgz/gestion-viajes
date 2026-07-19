@@ -31,8 +31,8 @@ opens the view; a background scheduler is deferred to the deploy phase.
 
 ## Project structure
 
-Implemented in FEAT-003 (baseline), FEAT-004 (funnel core), FEAT-005 (reminders) and FEAT-001 (F1
-public intake):
+Implemented in FEAT-003 (baseline), FEAT-004 (funnel core), FEAT-005 (reminders), FEAT-001 (F1
+public intake) and FEAT-006 (agency document layer):
 
 ```txt
 prisma/          # schema.prisma (Operator, Trip, Participant) + migrations/ + seed.ts
@@ -50,6 +50,8 @@ src/
       trips/[tripId]/push/page.tsx   # daily push list: message, copy, nudge/snooze/dismiss (FEAT-005)
       trips/[tripId]/push/actions.ts # "use server" recordNudge, snoozeParticipant, dismissParticipantToday
       trips/[tripId]/push/copy-button.tsx # "use client" — clipboard only, no business logic
+      trips/[tripId]/documents/page.tsx   # agency document versions by type, mark current (FEAT-006)
+      trips/[tripId]/documents/actions.ts # "use server" addDocument, markCurrent
     api/auth/[...nextauth]/       # Auth.js route handler
     login/, page.tsx              # FEAT-003
   lib/
@@ -61,6 +63,8 @@ src/
     f1Registration.ts # pure zod schema + validator for the public F1 form (FR-001)
     trips.ts       # Trip reads/writes
     participants.ts # Participant reads/writes, wraps funnel.ts, reminders.ts and f1Registration.ts
+    agencyDocuments.ts # AgencyDocument reads/writes; markDocumentCurrent's $transaction enforces
+                        # exactly one is_current per (trip, type) (FR-011)
   middleware.ts  # route protection (redirects unauthenticated /dashboard* to /login)
 docs_en/         # living product documentation
 ```
